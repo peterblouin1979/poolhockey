@@ -117,11 +117,37 @@ table.std{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btn.icon{padding:8px 11px}
 .day-title{font:900 1.5rem/1 var(--display);text-transform:uppercase;min-width:10ch;text-align:center}
-.nightly{display:flex;gap:8px;flex-wrap:wrap}
+.nlist{display:grid;gap:8px}
+.nl{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.nl[open]{border-color:var(--line-2)}
+.nl summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:36px minmax(0,1fr) auto auto 18px;gap:12px;align-items:center;padding:12px 14px}
+.nl summary::-webkit-details-marker{display:none}
+.nl summary:hover{background:var(--panel-2)}
+.nl .rkn{font:900 1.15rem/1 var(--display);color:var(--muted);text-align:center}
+.nl .nm{font-weight:700;font-size:1.02rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nl .ct{font-size:.86rem;color:var(--muted);white-space:nowrap}
+.nl .ct b{font:900 1.2rem/1 var(--display);color:var(--ink);margin-right:4px}
+.nl .gain{font:900 1.35rem/1 var(--display);min-width:3ch;text-align:right;color:var(--faint)}
+.nl .gain.on{color:var(--ice)}
+.nl .chev{color:var(--muted);transition:transform .2s}
+.nl[open] .chev{transform:rotate(90deg)}
+.nl-body{display:grid;gap:2px;padding:4px 14px 12px;border-top:1px dashed var(--line-2)}
+.pr{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.pr:last-child{border-bottom:0}
+.pr .who{min-width:0}
+.pr .who b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pr .who small{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.8rem;flex-wrap:wrap}
+.pr .st{font-size:.8rem;color:var(--muted);text-align:right;white-space:nowrap}
+.pr .st.lv{color:var(--live);font-weight:700}
+.pr .pp{font:900 1.2rem/1 var(--display);min-width:3ch;text-align:right;color:var(--faint)}
+.pr .pp.on{color:var(--ink)}
+.pr.out{opacity:.55}
+.pr .out-tag{font:700 .62rem/1 var(--body);text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:999px;border:1px solid var(--line-2);color:var(--faint)}
+@media (max-width:520px){.nl summary{grid-template-columns:28px minmax(0,1fr) auto auto 14px;gap:8px}.pr{grid-template-columns:auto minmax(0,1fr) auto}.pr .st{display:none}}
 .nt{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:.9rem}
 .nt b{font:900 1.1rem/1 var(--display);color:var(--ice)}
 .nt.zero b{color:var(--faint)}
-.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.games{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
 .game{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:8px;align-content:start}
 .game.in{border-color:rgba(255,75,75,.5)}
 .g-meta{display:flex;justify-content:space-between;gap:8px;font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
@@ -248,7 +274,8 @@ footer .wrap{display:grid;gap:6px;border-top:1px solid var(--line);padding-top:1
       <div><span class="eyebrow">Matchs et points de la soirée</span><h2>Ce soir</h2></div>
       <div class="day-nav"><button class="btn icon" id="dPrev" aria-label="Jour précédent">&#8592;</button><span class="day-title" id="dTitle"></span><button class="btn icon" id="dNext" aria-label="Jour suivant">&#8594;</button></div>
     </div>
-    <div class="nightly" id="nightly"></div>
+    <div class="nlist" id="nightList"></div>
+    <div><span class="eyebrow" id="gamesLbl">Les matchs</span></div>
     <div class="games" id="games"></div>
   </section>
 
@@ -439,32 +466,43 @@ async function loadDay(d, force){
     SB[d] = { at: Date.now(), games: g };
   }
 }
+const OPEN = new Set();
+function statLine(q, s){
+  if (!s) return "";
+  if (q.type === "T") return s[1] ? "victoire" : s[2] ? "défaite en prolongation" : "";
+  if (q.type === "G") return [s[4] ? "victoire" : "", s[5] ? "blanchissage" : "", s[1] ? s[1] + " B" : "", s[2] ? s[2] + " P" : ""].filter(Boolean).join(" · ");
+  return [s[1] ? s[1] + " B" : "", s[2] ? s[2] + " P" : "", s[3] ? "tour du chapeau" : ""].filter(Boolean).join(" · ");
+}
 function renderDay(){
   const d = VIEW_DAY, today = TODAY();
   $("#dTitle").textContent = d === today ? "Ce soir" : d === addDays(today, -1) ? "Hier" : d === addDays(today, 1) ? "Demain" : fmtDay.format(dayObj(d));
   $("#dTitle").title = fmtLong.format(dayObj(d));
   const games = (SB[d]?.games || []).slice().sort((x, y) => x.date - y.date);
-  // participants' points that night
+  const gameOf = {};
+  games.forEach(g => { if (g.st !== "off") { gameOf[g.a.t] = g; gameOf[g.h.t] = g; } });
   const k1 = idxThrough(d), k0 = idxBefore(d);
   const a = standingsAt(k1), b = Object.fromEntries(standingsAt(k0).map(r => [r.p.id, r.pts]));
-  const night = a.map(r => ({ n: r.p.name, g: r.pts - b[r.p.id] })).sort((x, y) => y.g - x.g);
+  const gain = Object.fromEntries(a.map(r => [r.p.id, r.pts - b[r.p.id]]));
   const started = games.some(g => g.st !== "pre");
-  $("#nightly").innerHTML = games.length && started ? `<span class="help" style="align-self:center">Points de la soirée :</span>` + night.map(x => `<span class="nt ${x.g ? "" : "zero"}"><b>${x.g > 0 ? "+" + x.g : x.g}</b>${esc(x.n)}</span>`).join("") : "";
   const dayStats = DATA?.days?.[d] || { p: {}, t: {} };
+  const status = (g) => g.st === "in" ? `${g.a.t} ${g.a.s}-${g.h.s} ${g.h.t} · ${g.det}` : g.st === "post" ? `${g.a.t} ${g.a.s}-${g.h.s} ${g.h.t} · ${g.det || "Final"}` : fmtTime.format(g.date);
+  $("#nightList").innerHTML = !games.length ? "" : R.now.map(r => {
+    const playing = r.picks.filter(x => gameOf[teamOf(x.q)]).sort((x, y) => (y.counted - x.counted) || (gameOf[teamOf(x.q)].date - gameOf[teamOf(y.q)].date) || x.q.r - y.q.r);
+    const g = gain[r.p.id];
+    const rows = playing.map(x => {
+      const q = x.q, gm = gameOf[teamOf(q)], me = teamOf(q), opp = gm.a.t === me ? "@ " + gm.h.t : "vs " + gm.a.t;
+      const s = q.type === "T" ? dayStats.t[q.team] : dayStats.p[q.id];
+      const p = s ? pts(q, s) : 0, ln = statLine(q, s);
+      return `<div class="pr ${x.counted ? "" : "out"}">${face(q)}<div class="who"><b>${esc(q.type === "T" ? "Équipe " + q.name : q.name)}</b><small>${logo(me, true)} ${esc(opp)}${ln ? " · " + esc(ln) : ""}${x.counted ? "" : ` <span class="out-tag">hors top 10</span>`}</small></div><span class="st ${gm.st === "in" ? "lv" : ""}">${esc(status(gm))}</span><span class="pp ${p ? "on" : ""}">${gm.st === "pre" ? "" : p > 0 ? "+" + p : "0"}</span></div>`;
+    }).join("");
+    return `<details class="nl" data-p="${r.p.id}" ${OPEN.has(r.p.id) ? "open" : ""}><summary><span class="rkn">${r.rank}</span><span class="nm">${esc(r.p.name)}</span><span class="ct"><b>${playing.length}</b>joueur${playing.length > 1 ? "s" : ""}</span><span class="gain ${g > 0 ? "on" : ""}">${started ? (g > 0 ? "+" + g : "0") : ""}</span><span class="chev" aria-hidden="true">›</span></summary>
+      <div class="nl-body">${rows || `<p class="help" style="padding:8px 0">Aucun joueur de ${esc(r.p.name)} ne joue ${d === today ? "ce soir" : "cette journée-là"}.</p>`}</div></details>`;
+  }).join("");
+  $("#gamesLbl").textContent = games.length ? (d === today ? "Les matchs de ce soir" : "Les matchs") : "";
   $("#games").innerHTML = games.length ? games.map(g => {
     const meta = g.st === "in" ? `<span class="lv">${esc(g.det || "En cours")}</span>` : g.st === "post" ? `<span>${esc(g.det || "Final")}</span>` : g.st === "off" ? "<span>Reporté</span>" : `<span>${esc(fmtTime.format(g.date))}</span>`;
-    const row = (me, op) => `<div class="g-row ${g.st === "post" ? (me.w ? "win" : "lose") : ""}">${logo(me.t)}<span class="g-name">${esc(POOL.teams[me.t]?.name || me.t)}</span><span class="g-sc">${g.st === "pre" ? "" : me.s}</span></div>`;
-    const picks = PICKS.filter(q => teamOf(q) === g.a.t || teamOf(q) === g.h.t).sort((x, y) => (teamOf(x) === g.a.t ? 0 : 1) - (teamOf(y) === g.a.t ? 0 : 1) || x.owner.name.localeCompare(y.owner.name));
-    const lines = picks.map(q => {
-      const s = q.type === "T" ? dayStats.t[q.team] : dayStats.p[q.id];
-      const p = s ? pts(q, s) : 0;
-      let ln = "";
-      if (s && q.type === "T") ln = s[1] ? "victoire" : s[2] ? "déf. prol." : "";
-      else if (s && q.type === "G") ln = [s[4] ? "victoire" : "", s[5] ? "blanchissage" : "", s[1] ? s[1] + " B" : "", s[2] ? s[2] + " P" : ""].filter(Boolean).join(" · ");
-      else if (s) ln = [s[1] ? s[1] + " B" : "", s[2] ? s[2] + " P" : "", s[3] ? "tour du chapeau" : ""].filter(Boolean).join(" · ");
-      return `<div class="gp"><span class="who">${esc(q.type === "T" ? "Équipe " + q.name : q.name)} ${ln ? `<span class="ln">· ${esc(ln)}</span>` : ""}</span><span class="own">${esc(q.owner.name)}</span><span class="pp ${p ? "on" : ""}">${g.st === "pre" ? "" : p > 0 ? "+" + p : "0"}</span></div>`;
-    }).join("");
-    return `<div class="game ${g.st === "in" ? "in" : ""}"><div class="g-meta">${meta}<span>${esc(g.tv || "")}</span></div>${row(g.a, g.h)}${row(g.h, g.a)}${lines ? `<div class="g-picks">${lines}</div>` : ""}</div>`;
+    const row = (me) => `<div class="g-row ${g.st === "post" ? (me.w ? "win" : "lose") : ""}">${logo(me.t)}<span class="g-name">${esc(POOL.teams[me.t]?.name || me.t)}</span><span class="g-sc">${g.st === "pre" ? "" : me.s}</span></div>`;
+    return `<div class="game ${g.st === "in" ? "in" : ""}"><div class="g-meta">${meta}<span>${esc(g.tv || "")}</span></div>${row(g.a)}${row(g.h)}</div>`;
   }).join("") : `<div class="empty">Aucun match de la LNH ${d === today ? "ce soir" : "cette journée-là"}.</div>`;
 }
 
@@ -531,6 +569,7 @@ async function boot(){
   renderAll();
   $("#std").addEventListener("click", e => { const tr = e.target.closest("tr[data-p]"); if (tr) select(tr.dataset.p, true); });
   $("#std").addEventListener("keydown", e => { const tr = e.target.closest("tr[data-p]"); if (tr && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); select(tr.dataset.p, true); } });
+  $("#nightList").addEventListener("toggle", e => { const el = e.target; if (el.matches?.("details.nl")) { if (el.open) OPEN.add(el.dataset.p); else OPEN.delete(el.dataset.p); } }, true);
   $("#chips").addEventListener("click", e => { const b = e.target.closest("button[data-p]"); if (b) select(b.dataset.p); });
   $("#dPrev").onclick = async () => { VIEW_DAY = addDays(VIEW_DAY, -1); await loadDay(VIEW_DAY); renderDay(); };
   $("#dNext").onclick = async () => { VIEW_DAY = addDays(VIEW_DAY, 1); await loadDay(VIEW_DAY); renderDay(); };
