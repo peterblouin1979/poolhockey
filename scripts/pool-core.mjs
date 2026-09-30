@@ -114,6 +114,21 @@ export async function update(pool, prev, getJSON, now = new Date()) {
     if (stillClosing && dayFinal && d < today) closed = d; else stillClosing = false;
   }
   data.closedThrough = closed;
+
+  // Alignements LNH : repère les joueurs qui ne sont dans aucune équipe (sans contrat, mineures…)
+  // Environ 8 fois par jour, et au premier passage.
+  const h = now.getUTCHours(), m = now.getUTCMinutes();
+  if (!Array.isArray(data.noRoster) || (h % 3 === 0 && m < 15)) {
+    const seen = new Set();
+    data.team = data.team || {};
+    for (const [ab, t] of Object.entries(pool.teams)) {
+      const r = await getJSON(`${API}/teams/${t.id}/roster`);
+      for (const g of r.athletes || []) for (const a of g.items || []) {
+        if (ids.has(a.id)) { seen.add(a.id); data.team[a.id] = ab; }
+      }
+    }
+    data.noRoster = [...ids].filter((id) => !seen.has(id)).sort();
+  }
   // garder seulement 8 jours de matchs pour l'affichage
   const keep = addDays(today, -7);
   for (const k of Object.keys(data.games)) if (k < keep) delete data.games[k];

@@ -142,6 +142,14 @@ table.std{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .pr .pp{font:900 1.2rem/1 var(--display);min-width:3ch;text-align:right;color:var(--faint)}
 .pr .pp.on{color:var(--ink)}
 .pr.out{opacity:.55}
+.stt{display:inline-flex;align-items:center;font:700 .62rem/1 var(--body);text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:999px;white-space:nowrap;vertical-align:1px}
+.stt.out{background:rgba(239,91,91,.18);color:#ff8a8a}
+.stt.dtd{background:rgba(255,197,61,.16);color:var(--gold)}
+.stt.susp{background:rgba(190,120,255,.18);color:#d3a8ff}
+.stt.nc{background:rgba(147,166,191,.16);color:var(--muted)}
+.inj-line{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:2px}
+.inj-n{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:8px;border-radius:999px;background:rgba(239,91,91,.18);color:#ff8a8a;font:700 .68rem/1 var(--body);vertical-align:2px}
+.nl .ct small{color:#ff8a8a;margin-left:6px}
 .pr .out-tag{font:700 .62rem/1 var(--body);text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:999px;border:1px solid var(--line-2);color:var(--faint)}
 @media (max-width:520px){.nl summary{grid-template-columns:28px minmax(0,1fr) auto auto 14px;gap:8px}.pr{grid-template-columns:auto minmax(0,1fr) auto}.pr .st{display:none}}
 .nt{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;background:var(--panel);border:1px solid var(--line);font-size:.9rem}
@@ -443,7 +451,7 @@ function renderHero(){
 function renderStandings(){
   const cell = (n, cls) => `<td class="${n > 0 ? cls || "" : "zero"}">${n > 0 ? "+" + n : n < 0 ? n : "0"}</td>`;
   $("#std").innerHTML = `<thead><tr><th>Pos</th><th class="l">Participant</th><th>PPts</th><th>B</th><th>P</th><th>PJ</th><th>TC</th><th>Ce soir</th><th>7 j</th><th>30 j</th><th>PPts/PJ</th><th>Dép.</th><th>Écart</th></tr></thead><tbody>` +
-    R.now.map(r => `<tr class="g${r.rank}" data-p="${r.p.id}" tabindex="0"><td class="pos">${r.rank}</td><td class="l nm">${esc(r.p.name)}</td><td class="pts">${r.pts}</td><td>${r.b}</td><td>${r.pa}</td><td>${r.gp}</td><td>${r.tc}</td>
+    R.now.map(r => `<tr class="g${r.rank}" data-p="${r.p.id}" tabindex="0"><td class="pos">${r.rank}</td><td class="l nm">${esc(r.p.name)}${(() => { const n = r.picks.filter(x => statusOf(x.q)?.out).length; return n ? `<span class="inj-n" title="${n} joueur${n > 1 ? "s" : ""} blessé${n > 1 ? "s" : ""}, suspendu${n > 1 ? "s" : ""} ou sans contrat">${n}</span>` : ""; })()}</td><td class="pts">${r.pts}</td><td>${r.b}</td><td>${r.pa}</td><td>${r.gp}</td><td>${r.tc}</td>
       ${cell(r.tonight, "tonight")}${cell(r.w7)}${cell(r.w30)}<td>${r.gp ? (r.pts / r.gp).toFixed(2).replace(".", ",") : "0,00"}</td>
       <td class="${r.dep > 0 ? "up" : r.dep < 0 ? "dn" : "zero"}">${r.dep > 0 ? "▲" + r.dep : r.dep < 0 ? "▼" + (-r.dep) : "—"}</td><td>${r.gap}</td></tr>`).join("") + "</tbody>";
 }
@@ -487,15 +495,18 @@ function renderDay(){
   const dayStats = DATA?.days?.[d] || { p: {}, t: {} };
   const status = (g) => g.st === "in" ? `${g.a.t} ${g.a.s}-${g.h.s} ${g.h.t} · ${g.det}` : g.st === "post" ? `${g.a.t} ${g.a.s}-${g.h.s} ${g.h.t} · ${g.det || "Final"}` : fmtTime.format(g.date);
   $("#nightList").innerHTML = !games.length ? "" : R.now.map(r => {
-    const playing = r.picks.filter(x => gameOf[teamOf(x.q)]).sort((x, y) => (y.counted - x.counted) || (gameOf[teamOf(x.q)].date - gameOf[teamOf(y.q)].date) || x.q.r - y.q.r);
+    const inGame = r.picks.filter(x => gameOf[teamOf(x.q)]);
+    const playing = inGame.slice().sort((x, y) => ((statusOf(x.q)?.out ? 1 : 0) - (statusOf(y.q)?.out ? 1 : 0)) || (y.counted - x.counted) || (gameOf[teamOf(x.q)].date - gameOf[teamOf(y.q)].date) || x.q.r - y.q.r);
     const g = gain[r.p.id];
+    const nOut = playing.filter(x => statusOf(x.q)?.out).length, nPlay = playing.length - nOut;
     const rows = playing.map(x => {
       const q = x.q, gm = gameOf[teamOf(q)], me = teamOf(q), opp = gm.a.t === me ? "@ " + gm.h.t : "vs " + gm.a.t;
       const s = q.type === "T" ? dayStats.t[q.team] : dayStats.p[q.id];
       const p = s ? pts(q, s) : 0, ln = statLine(q, s);
-      return `<div class="pr ${x.counted ? "" : "out"}">${face(q)}<div class="who"><b>${esc(q.type === "T" ? "Équipe " + q.name : q.name)}</b><small>${logo(me, true)} ${esc(opp)}${ln ? " · " + esc(ln) : ""}${x.counted ? "" : ` <span class="out-tag">hors top 10</span>`}</small></div><span class="st ${gm.st === "in" ? "lv" : ""}">${esc(status(gm))}</span><span class="pp ${p ? "on" : ""}">${gm.st === "pre" ? "" : p > 0 ? "+" + p : "0"}</span></div>`;
+      const stq = statusOf(q);
+      return `<div class="pr ${x.counted && !stq?.out ? "" : "out"}">${face(q)}<div class="who"><b>${esc(q.type === "T" ? "Équipe " + q.name : q.name)} ${badge(stq)}</b><small>${logo(me, true)} ${esc(opp)}${ln ? " · " + esc(ln) : ""}${x.counted ? "" : ` <span class="out-tag">hors top 10</span>`}</small></div><span class="st ${gm.st === "in" ? "lv" : ""}">${esc(status(gm))}</span><span class="pp ${p ? "on" : ""}">${gm.st === "pre" ? "" : p > 0 ? "+" + p : "0"}</span></div>`;
     }).join("");
-    return `<details class="nl" data-p="${r.p.id}" ${OPEN.has(r.p.id) ? "open" : ""}><summary><span class="rkn">${r.rank}</span><span class="nm">${esc(r.p.name)}</span><span class="ct"><b>${playing.length}</b>joueur${playing.length > 1 ? "s" : ""}</span><span class="gain ${g > 0 ? "on" : ""}">${started ? (g > 0 ? "+" + g : "0") : ""}</span><span class="chev" aria-hidden="true">›</span></summary>
+    return `<details class="nl" data-p="${r.p.id}" ${OPEN.has(r.p.id) ? "open" : ""}><summary><span class="rkn">${r.rank}</span><span class="nm">${esc(r.p.name)}</span><span class="ct"><b>${nPlay}</b>joueur${nPlay > 1 ? "s" : ""}${nOut ? `<small>+${nOut} blessé${nOut > 1 ? "s" : ""}</small>` : ""}</span><span class="gain ${g > 0 ? "on" : ""}">${started ? (g > 0 ? "+" + g : "0") : ""}</span><span class="chev" aria-hidden="true">›</span></summary>
       <div class="nl-body">${rows || `<p class="help" style="padding:8px 0">Aucun joueur de ${esc(r.p.name)} ne joue ${d === today ? "ce soir" : "cette journée-là"}.</p>`}</div></details>`;
   }).join("");
   $("#gamesLbl").textContent = games.length ? (d === today ? "Les matchs de ce soir" : "Les matchs") : "";
@@ -517,7 +528,7 @@ function renderLineup(){
   const rows = r.picks.slice().sort((a, b) => b.pts - a.pts || b.g - a.g || a.r - b.r);
   $("#lu").innerHTML = `<thead><tr><th>Ronde</th><th class="l">Choix</th><th>Pts</th><th>B</th><th>P</th><th>PJ</th><th>V</th><th>Boni</th><th>Ce soir</th><th class="l">Compte</th></tr></thead><tbody>` +
     rows.map(x => { const q = x.q; const isT = q.type === "T";
-      return `<tr class="${x.counted ? "" : "out"}"><td>${q.r}</td><td class="l"><span class="pl">${face(q)}<span>${esc(isT ? "Équipe " + q.name : q.name)}<small>${esc(posLbl(q))} · ${esc(POOL.teams[teamOf(q)]?.name || teamOf(q))}</small></span></span></td>
+      return `<tr class="${x.counted ? "" : "out"}"><td>${q.r}</td><td class="l"><span class="pl">${face(q)}<span>${esc(isT ? "Équipe " + q.name : q.name)} ${badge(statusOf(q))}<small>${esc(posLbl(q))} · ${esc(POOL.teams[teamOf(q)]?.name || teamOf(q))}${statusOf(q)?.info ? " · " + esc(statusOf(q).info) : ""}</small></span></span></td>
       <td class="pts">${x.pts}</td><td>${isT ? "—" : x.g}</td><td>${isT ? "—" : x.a}</td><td>${x.gp}</td><td>${q.type === "G" ? x.w : isT ? x.tw : "—"}</td><td>${q.type === "G" ? (x.so ? x.so + " BL" : "—") : isT ? (x.otl ? x.otl + " DP" : "—") : (x.ht ? x.ht + " TC" : "—")}</td><td>${q.today > 0 ? "+" + q.today : "—"}</td><td class="l"><span class="cnt ${x.counted ? "" : "no"}">${x.counted ? "Compte" : "Hors top 10"}</span></td></tr>`; }).join("") + "</tbody>";
 }
 
@@ -526,8 +537,42 @@ function renderLeaders(){
   const all = [];
   R.now.forEach(r => r.picks.forEach(x => { if (x.q.type !== "T") all.push({ ...x, owner: r.p }); }));
   const top = all.sort(cmp).slice(0, 12);
-  $("#leaders").innerHTML = top.map((x, i) => `<div class="card ld">${face(x.q, true)}<div style="min-width:0"><span class="n">${i + 1}. ${esc(x.q.name)}</span><small>${esc(x.owner.name)} · ${esc(POOL.teams[teamOf(x.q)]?.name || "")} · ${x.gp} PJ${x.q.type === "G" ? ` · ${x.w} V` : ` · ${x.g} B ${x.a} P`}</small></div><span class="p">${x.pts}</span></div>`).join("");
+  $("#leaders").innerHTML = top.map((x, i) => `<div class="card ld">${face(x.q, true)}<div style="min-width:0"><span class="n">${i + 1}. ${esc(x.q.name)} ${badge(statusOf(x.q))}</span><small>${esc(x.owner.name)} · ${esc(POOL.teams[teamOf(x.q)]?.name || "")} · ${x.gp} PJ${x.q.type === "G" ? ` · ${x.w} V` : ` · ${x.g} B ${x.a} P`}</small></div><span class="p">${x.pts}</span></div>`).join("");
 }
+
+/* ---------- Blessures / statuts ---------- */
+let INJ = {};
+const BODY = { "Shoulder": "épaule", "Knee": "genou", "Lower Body": "bas du corps", "Upper Body": "haut du corps", "Lower Leg": "jambe", "Leg": "jambe", "Skull": "crâne", "Head": "tête", "Concussion": "commotion", "Undisclosed": "non précisé", "Hand": "main", "Wrist": "poignet", "Ankle": "cheville", "Foot": "pied", "Back": "dos", "Hip": "hanche", "Groin": "aine", "Illness": "maladie", "Face": "visage", "Finger": "doigt", "Elbow": "coude", "Neck": "cou", "Arm": "bras", "Hamstring": "ischio-jambiers", "Achilles": "tendon d'Achille", "Chest": "poitrine", "Ribs": "côtes", "Abdomen": "abdomen", "Thumb": "pouce", "Personal": "raisons personnelles", "Jaw": "mâchoire", "Eye": "œil", "Thigh": "cuisse", "Quadriceps": "quadriceps", "Calf": "mollet", "Collarbone": "clavicule", "Core": "tronc", "Oblique": "oblique", "Pectoral": "pectoral", "Heel": "talon", "Toe": "orteil", "Nose": "nez", "Mouth": "bouche", "Lung": "poumon", "Heart": "cœur", "Kidney": "rein", "Spleen": "rate", "Not Specified": "non précisé" };
+const fmtRet = new Intl.DateTimeFormat("fr-CA", { day: "numeric", month: "short", timeZone: "UTC" });
+async function loadInjuries(){
+  try {
+    const r = await fetch(`${API}/injuries`, { cache: "no-store" }); if (!r.ok) return;
+    const j = await r.json(); const m = {};
+    for (const t of j.injuries || []) for (const i of t.injuries || []) {
+      const id = i.athlete?.id || (i.athlete?.links?.[0]?.href || "").match(/id\/(\d+)/)?.[1];
+      if (id) m[id] = { s: i.status || "", t: i.details?.type || "", r: i.details?.returnDate || "", c: i.shortComment || "" };
+    }
+    INJ = m;
+  } catch (e) {}
+}
+// { cls, label, tip, out } ou null
+function statusOf(q){
+  if (q.type === "T") return null;
+  const i = INJ[q.id];
+  if (i) {
+    const body = i.t && i.t !== "Suspension" ? BODY[i.t] || i.t.toLowerCase() : "";
+    const ret = i.r ? "retour prévu le " + fmtRet.format(new Date(i.r + "T12:00:00Z")) : "";
+    let cls = "out", label = "Blessé";
+    if (/suspens/i.test(i.s)) { cls = "susp"; label = "Suspendu"; }
+    else if (/day/i.test(i.s)) { cls = "dtd"; label = "Jour à jour"; }
+    else if (/^out$/i.test(i.s)) { label = "Absent"; }
+    const info = [body, ret].filter(Boolean).join(" · ");
+    return { cls, label, info, tip: [label, info, i.c].filter(Boolean).join(" — "), out: cls !== "dtd" };
+  }
+  if ((DATA?.noRoster || []).includes(q.id)) return { cls: "nc", label: "Sans contrat", info: "dans aucune équipe de la LNH", tip: "Sans contrat, dans les mineures ou hors de la LNH", out: true };
+  return null;
+}
+const badge = (st) => st ? `<span class="stt ${st.cls}" title="${esc(st.tip)}">${esc(st.label)}</span>` : "";
 
 /* ---------- News ---------- */
 async function loadNews(){
@@ -561,7 +606,7 @@ function select(id, scroll){
 async function boot(){
   await loadData();
   VIEW_DAY = TODAY();
-  await Promise.all([loadDay(VIEW_DAY), loadNews()]);
+  await Promise.all([loadDay(VIEW_DAY), loadNews(), loadInjuries()]);
   // pas de match aujourd'hui : montrer le prochain jour de match
   if (!SB[VIEW_DAY]?.games.length) {
     for (let i = 1; i <= 5; i++) { const d = addDays(VIEW_DAY, i); await loadDay(d); if (SB[d]?.games.length) { VIEW_DAY = d; break; } }
@@ -583,7 +628,7 @@ async function tick(){
     if (document.visibilityState === "visible") {
       await loadDay(TODAY(), true);
       if (VIEW_DAY !== TODAY()) await loadDay(VIEW_DAY);
-      if (Date.now() - (tick.data || 0) > 3 * 60e3) { await Promise.all([loadData(), loadNews()]); tick.data = Date.now(); }
+      if (Date.now() - (tick.data || 0) > 3 * 60e3) { await Promise.all([loadData(), loadNews(), loadInjuries()]); tick.data = Date.now(); }
       renderAll();
     }
     tick();
