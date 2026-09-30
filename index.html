@@ -476,7 +476,7 @@ function renderLineup(){
   const r = R.now.find(x => x.p.id === SEL) || R.now[0];
   $("#luHead").innerHTML = `<div><span class="eyebrow">${r.rank === 1 ? "1<sup>er</sup>" : r.rank + "<sup>e</sup>"} au classement</span><h3>${esc(r.p.name)}</h3></div>
     <div class="lu-sum"><div><b>${r.pts}</b><span>Points</span></div><div><b>${r.gp}</b><span>Matchs</span></div><div><b>${r.tonight > 0 ? "+" + r.tonight : 0}</b><span>Ce soir</span></div><div><b>${r.gap ? "−" + r.gap : "—"}</b><span>Écart</span></div></div>`;
-  const rows = r.picks.slice().sort((a, b) => a.r - b.r);
+  const rows = r.picks.slice().sort((a, b) => b.pts - a.pts || b.g - a.g || a.r - b.r);
   $("#lu").innerHTML = `<thead><tr><th>Ronde</th><th class="l">Choix</th><th>Pts</th><th>B</th><th>P</th><th>PJ</th><th>V</th><th>Boni</th><th>Ce soir</th><th class="l">Compte</th></tr></thead><tbody>` +
     rows.map(x => { const q = x.q; const isT = q.type === "T";
       return `<tr class="${x.counted ? "" : "out"}"><td>${q.r}</td><td class="l"><span class="pl">${face(q)}<span>${esc(isT ? "Équipe " + q.name : q.name)}<small>${esc(posLbl(q))} · ${esc(POOL.teams[teamOf(q)]?.name || teamOf(q))}</small></span></span></td>
