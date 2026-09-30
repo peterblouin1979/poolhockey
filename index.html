@@ -220,8 +220,6 @@ footer .wrap{display:grid;gap:6px;border-top:1px solid var(--line);padding-top:1
       <h1>Pool <span>Blouin</span></h1>
       <p class="sub">12 participants, 14 choix chacun, les 10 meilleurs comptent. Tout se calcule tout seul à partir des feuilles de match officielles.</p>
     </div>
-    <div class="podium" id="podium"></div>
-    <div class="facts" id="facts"></div>
   </div>
 </header>
 
@@ -479,11 +477,10 @@ function renderLineup(){
   $("#luHead").innerHTML = `<div><span class="eyebrow">${r.rank === 1 ? "1<sup>er</sup>" : r.rank + "<sup>e</sup>"} au classement</span><h3>${esc(r.p.name)}</h3></div>
     <div class="lu-sum"><div><b>${r.pts}</b><span>Points</span></div><div><b>${r.gp}</b><span>Matchs</span></div><div><b>${r.tonight > 0 ? "+" + r.tonight : 0}</b><span>Ce soir</span></div><div><b>${r.gap ? "−" + r.gap : "—"}</b><span>Écart</span></div></div>`;
   const rows = r.picks.slice().sort((a, b) => a.r - b.r);
-  $("#lu").innerHTML = `<thead><tr><th>Ronde</th><th class="l">Choix</th><th>PJ</th><th>B</th><th>P</th><th>V</th><th>Boni</th><th>Pts</th><th>Ce soir</th><th class="l">Compte</th></tr></thead><tbody>` +
+  $("#lu").innerHTML = `<thead><tr><th>Ronde</th><th class="l">Choix</th><th>Pts</th><th>B</th><th>P</th><th>PJ</th><th>V</th><th>Boni</th><th>Ce soir</th><th class="l">Compte</th></tr></thead><tbody>` +
     rows.map(x => { const q = x.q; const isT = q.type === "T";
       return `<tr class="${x.counted ? "" : "out"}"><td>${q.r}</td><td class="l"><span class="pl">${face(q)}<span>${esc(isT ? "Équipe " + q.name : q.name)}<small>${esc(posLbl(q))} · ${esc(POOL.teams[teamOf(q)]?.name || teamOf(q))}</small></span></span></td>
-      <td>${x.gp}</td><td>${isT ? "—" : x.g}</td><td>${isT ? "—" : x.a}</td><td>${q.type === "G" ? x.w : isT ? x.tw : "—"}</td><td>${q.type === "G" ? (x.so ? x.so + " BL" : "—") : isT ? (x.otl ? x.otl + " DP" : "—") : (x.ht ? x.ht + " TC" : "—")}</td>
-      <td class="pts">${x.pts}</td><td>${q.today > 0 ? "+" + q.today : "—"}</td><td class="l"><span class="cnt ${x.counted ? "" : "no"}">${x.counted ? "Compte" : "Hors top 10"}</span></td></tr>`; }).join("") + "</tbody>";
+      <td class="pts">${x.pts}</td><td>${isT ? "—" : x.g}</td><td>${isT ? "—" : x.a}</td><td>${x.gp}</td><td>${q.type === "G" ? x.w : isT ? x.tw : "—"}</td><td>${q.type === "G" ? (x.so ? x.so + " BL" : "—") : isT ? (x.otl ? x.otl + " DP" : "—") : (x.ht ? x.ht + " TC" : "—")}</td><td>${q.today > 0 ? "+" + q.today : "—"}</td><td class="l"><span class="cnt ${x.counted ? "" : "no"}">${x.counted ? "Compte" : "Hors top 10"}</span></td></tr>`; }).join("") + "</tbody>";
 }
 
 /* ---------- Render: leaders ---------- */
@@ -517,7 +514,7 @@ async function loadData(){
 function renderAll(){
   compute();
   if (!SEL) SEL = ls.get("poolhockey:sel") || R.now[0].p.id;
-  renderStatus(); renderHero(); renderStandings(); renderDay(); renderChips(); renderLineup(); renderLeaders(); renderNews();
+  renderStatus(); renderStandings(); renderDay(); renderChips(); renderLineup(); renderLeaders(); renderNews();
 }
 function select(id, scroll){
   SEL = id; ls.set("poolhockey:sel", id); renderChips(); renderLineup();
