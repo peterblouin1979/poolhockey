@@ -73,12 +73,14 @@ export async function update(pool, prev, getJSON, now = new Date()) {
       for (const tb of s.boxscore?.players || []) {
         const ab = tb.team?.abbreviation;
         const comp = ab === A.team.abbreviation ? A : H;
+        data.team = data.team || {};
         const goalies = [];
         for (const grp of tb.statistics || []) {
           const k = grp.keys || [];
           for (const a of grp.athletes || []) {
             const id = a.athlete?.id;
             const v = a.stats || [];
+            if (ids.has(id)) data.team[id] = ab;
             const num = (key) => { const i = k.indexOf(key); return i < 0 ? 0 : parseFloat(v[i]) || 0; };
             const toi = toiSec(v[k.indexOf("timeOnIce")]);
             if (grp.name === "goalies") {

@@ -229,77 +229,88 @@
      "type": "F",
      "id": "4024857",
      "name": "Clayton Keller",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "UTAH"
     },
     {
      "r": 2,
      "type": "F",
      "id": "3942335",
      "name": "Kirill Kaprizov",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "MIN"
     },
     {
      "r": 3,
      "type": "F",
      "id": "3114802",
      "name": "Adrian Kempe",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "LA"
     },
     {
      "r": 4,
      "type": "F",
      "id": "5545",
      "name": "Mark Stone",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "VGK"
     },
     {
      "r": 5,
      "type": "F",
      "id": "3114770",
      "name": "Nick Schmaltz",
-     "pos": "C"
+     "pos": "C",
+     "team": "UTAH"
     },
     {
      "r": 6,
      "type": "F",
      "id": "3735",
      "name": "Patrick Kane",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "CHI"
     },
     {
      "r": 7,
      "type": "F",
      "id": "3899949",
      "name": "Pavel Zacha",
-     "pos": "C"
+     "pos": "C",
+     "team": "BOS"
     },
     {
      "r": 8,
      "type": "F",
      "id": "2970615",
      "name": "Tom Wilson",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "WSH"
     },
     {
      "r": 9,
      "type": "D",
      "id": "5436",
      "name": "Roman Josi",
-     "pos": "D"
+     "pos": "D",
+     "team": "NSH"
     },
     {
      "r": 10,
      "type": "F",
      "id": "2562624",
      "name": "Ryan Nugent-Hopkins",
-     "pos": "C"
+     "pos": "C",
+     "team": "EDM"
     },
     {
      "r": 11,
      "type": "F",
      "id": "3899979",
      "name": "Brock Boeser",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "VAN"
     },
     {
      "r": 12,
@@ -312,14 +323,16 @@
      "type": "G",
      "id": "4712036",
      "name": "Jeremy Swayman",
-     "pos": "G"
+     "pos": "G",
+     "team": "BOS"
     },
     {
      "r": 14,
      "type": "G",
      "id": "5188366",
      "name": "Sergei Murashov",
-     "pos": "G"
+     "pos": "G",
+     "team": "PIT"
     }
    ]
   },
@@ -332,91 +345,104 @@
      "type": "D",
      "id": "4352722",
      "name": "Evan Bouchard",
-     "pos": "D"
+     "pos": "D",
+     "team": "EDM"
     },
     {
      "r": 2,
      "type": "F",
      "id": "2968772",
      "name": "Filip Forsberg",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "NSH"
     },
     {
      "r": 3,
      "type": "F",
      "id": "4271734",
      "name": "Drake Batherson",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "OTT"
     },
     {
      "r": 4,
      "type": "F",
      "id": "5160",
      "name": "John Tavares",
-     "pos": "C"
+     "pos": "C",
+     "team": "TOR"
     },
     {
      "r": 5,
      "type": "F",
      "id": "5798",
      "name": "Brock Nelson",
-     "pos": "C"
+     "pos": "C",
+     "team": "COL"
     },
     {
      "r": 6,
      "type": "F",
      "id": "5216858",
      "name": "Beckett Sennecke",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "ANA"
     },
     {
      "r": 7,
      "type": "F",
      "id": "4587588",
      "name": "Pavel Dorofeyev",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "NYR"
     },
     {
      "r": 8,
      "type": "F",
      "id": "2555315",
      "name": "Charlie Coyle",
-     "pos": "C"
+     "pos": "C",
+     "team": "CBJ"
     },
     {
      "r": 9,
      "type": "D",
      "id": "4565227",
      "name": "Moritz Seider",
-     "pos": "D"
+     "pos": "D",
+     "team": "DET"
     },
     {
      "r": 10,
      "type": "D",
      "id": "3988803",
      "name": "Charlie McAvoy",
-     "pos": "D"
+     "pos": "D",
+     "team": "BOS"
     },
     {
      "r": 11,
      "type": "D",
      "id": "4697386",
      "name": "Jake Sanderson",
-     "pos": "D"
+     "pos": "D",
+     "team": "OTT"
     },
     {
      "r": 12,
      "type": "G",
      "id": "5622",
      "name": "Scott Wedgewood",
-     "pos": "G"
+     "pos": "G",
+     "team": "COL"
     },
     {
      "r": 13,
      "type": "G",
      "id": "4233889",
      "name": "Ukko-Pekka Luukkonen",
-     "pos": "G"
+     "pos": "G",
+     "team": "BUF"
     },
     {
      "r": 14,
@@ -435,21 +461,24 @@
      "type": "F",
      "id": "3899938",
      "name": "Mikko Rantanen",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "DAL"
     },
     {
      "r": 2,
      "type": "G",
      "id": "2976847",
      "name": "Andrei Vasilevskiy",
-     "pos": "G"
+     "pos": "G",
+     "team": "TB"
     },
     {
      "r": 3,
      "type": "D",
      "id": "3899972",
      "name": "Zach Werenski",
-     "pos": "D"
+     "pos": "D",
+     "team": "CBJ"
     },
     {
      "r": 4,
@@ -462,70 +491,80 @@
      "type": "F",
      "id": "3114722",
      "name": "Sam Reinhart",
-     "pos": "C"
+     "pos": "C",
+     "team": "FLA"
     },
     {
      "r": 6,
      "type": "F",
      "id": "4319858",
      "name": "Brady Tkachuk",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "FLA"
     },
     {
      "r": 7,
      "type": "F",
      "id": "5149155",
      "name": "Will Smith",
-     "pos": "C"
+     "pos": "C",
+     "team": "SJ"
     },
     {
      "r": 8,
      "type": "D",
      "id": "4233536",
      "name": "Miro Heiskanen",
-     "pos": "D"
+     "pos": "D",
+     "team": "DAL"
     },
     {
      "r": 9,
      "type": "F",
      "id": "5509",
      "name": "Zach Hyman",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "EDM"
     },
     {
      "r": 10,
      "type": "F",
      "id": "5103645",
      "name": "Jackson Blake",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "CAR"
     },
     {
      "r": 11,
      "type": "G",
      "id": "5452",
      "name": "Jacob Markstrom",
-     "pos": "G"
+     "pos": "G",
+     "team": "FLA"
     },
     {
      "r": 12,
      "type": "F",
      "id": "4062251",
      "name": "Jordan Kyrou",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "WSH"
     },
     {
      "r": 13,
      "type": "F",
      "id": "4874870",
      "name": "Josh Doan",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "BUF"
     },
     {
      "r": 14,
      "type": "F",
      "id": "5149170",
      "name": "Matvei Michkov",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "PHI"
     }
    ]
   },
@@ -538,91 +577,104 @@
      "type": "F",
      "id": "3648002",
      "name": "Jack Eichel",
-     "pos": "C"
+     "pos": "C",
+     "team": "VGK"
     },
     {
      "r": 2,
      "type": "D",
      "id": "4233563",
      "name": "Cale Makar",
-     "pos": "D"
+     "pos": "D",
+     "team": "COL"
     },
     {
      "r": 3,
      "type": "F",
      "id": "3114741",
      "name": "Nikolaj Ehlers",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "CAR"
     },
     {
      "r": 4,
      "type": "F",
      "id": "4874723",
      "name": "Dylan Guenther",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "UTAH"
     },
     {
      "r": 5,
      "type": "F",
      "id": "4697396",
      "name": "Seth Jarvis",
-     "pos": "C"
+     "pos": "C",
+     "team": "CAR"
     },
     {
      "r": 6,
      "type": "F",
      "id": "4268466",
      "name": "Morgan Geekie",
-     "pos": "C"
+     "pos": "C",
+     "team": "BOS"
     },
     {
      "r": 7,
      "type": "F",
      "id": "5080145",
      "name": "Cutter Gauthier",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "ANA"
     },
     {
      "r": 8,
      "type": "D",
      "id": "5291933",
      "name": "Matthew Schaefer",
-     "pos": "D"
+     "pos": "D",
+     "team": "NYI"
     },
     {
      "r": 9,
      "type": "F",
      "id": "4697397",
      "name": "Dylan Holloway",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "STL"
     },
     {
      "r": 10,
      "type": "D",
      "id": "4024868",
      "name": "Mikhail Sergachev",
-     "pos": "D"
+     "pos": "D",
+     "team": "UTAH"
     },
     {
      "r": 11,
      "type": "F",
      "id": "5342529",
      "name": "Gavin McKenna",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "TOR"
     },
     {
      "r": 12,
      "type": "G",
      "id": "3942065",
      "name": "Karel Vejmelka",
-     "pos": "G"
+     "pos": "G",
+     "team": "UTAH"
     },
     {
      "r": 13,
      "type": "G",
      "id": "3020225",
      "name": "Connor Hellebuyck",
-     "pos": "G"
+     "pos": "G",
+     "team": "WPG"
     },
     {
      "r": 14,
@@ -641,91 +693,104 @@
      "type": "F",
      "id": "4565236",
      "name": "Cole Caufield",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "MTL"
     },
     {
      "r": 2,
      "type": "F",
      "id": "4024854",
      "name": "Matthew Tkachuk",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "FLA"
     },
     {
      "r": 3,
      "type": "F",
      "id": "3114755",
      "name": "Dylan Larkin",
-     "pos": "C"
+     "pos": "C",
+     "team": "DET"
     },
     {
      "r": 4,
      "type": "F",
      "id": "4352683",
      "name": "Andrei Svechnikov",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "CAR"
     },
     {
      "r": 5,
      "type": "D",
      "id": "3149843",
      "name": "Darren Raddysh",
-     "pos": "D"
+     "pos": "D",
+     "team": "TOR"
     },
     {
      "r": 6,
      "type": "F",
      "id": "4565230",
      "name": "Trevor Zegras",
-     "pos": "C"
+     "pos": "C",
+     "team": "PHI"
     },
     {
      "r": 7,
      "type": "F",
      "id": "3114985",
      "name": "Ivan Barbashev",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "VGK"
     },
     {
      "r": 8,
      "type": "D",
      "id": "4024950",
      "name": "Jakob Chychrun",
-     "pos": "D"
+     "pos": "D",
+     "team": "WSH"
     },
     {
      "r": 9,
      "type": "F",
      "id": "3904183",
      "name": "Roope Hintz",
-     "pos": "C"
+     "pos": "C",
+     "team": "DAL"
     },
     {
      "r": 10,
      "type": "F",
      "id": "3042037",
      "name": "Anthony Mantha",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "NJ"
     },
     {
      "r": 11,
      "type": "F",
      "id": "3042017",
      "name": "Alexander Wennberg",
-     "pos": "C"
+     "pos": "C",
+     "team": "SJ"
     },
     {
      "r": 12,
      "type": "G",
      "id": "3942459",
      "name": "Dan Vladar",
-     "pos": "G"
+     "pos": "G",
+     "team": "PHI"
     },
     {
      "r": 13,
      "type": "G",
      "id": "2590824",
      "name": "John Gibson",
-     "pos": "G"
+     "pos": "G",
+     "team": "DET"
     },
     {
      "r": 14,
@@ -744,7 +809,8 @@
      "type": "F",
      "id": "3042083",
      "name": "Jake Guentzel",
-     "pos": "C"
+     "pos": "C",
+     "team": "TB"
     },
     {
      "r": 2,
@@ -757,84 +823,96 @@
      "type": "F",
      "id": "3904173",
      "name": "Sebastian Aho",
-     "pos": "C"
+     "pos": "C",
+     "team": "CAR"
     },
     {
      "r": 4,
      "type": "F",
      "id": "4063433",
      "name": "Alex DeBrincat",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "DET"
     },
     {
      "r": 5,
      "type": "D",
      "id": "4197146",
      "name": "Adam Fox",
-     "pos": "D"
+     "pos": "D",
+     "team": "NYR"
     },
     {
      "r": 6,
      "type": "F",
      "id": "5208",
      "name": "Ryan O'Reilly",
-     "pos": "C"
+     "pos": "C",
+     "team": "NSH"
     },
     {
      "r": 7,
      "type": "G",
      "id": "4996097",
      "name": "Brandon Bussi",
-     "pos": "G"
+     "pos": "G",
+     "team": "CAR"
     },
     {
      "r": 8,
      "type": "F",
      "id": "4874919",
      "name": "Matthew Knies",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "CBJ"
     },
     {
      "r": 9,
      "type": "D",
      "id": "3042016",
      "name": "Josh Morrissey",
-     "pos": "D"
+     "pos": "D",
+     "team": "WPG"
     },
     {
      "r": 10,
      "type": "F",
      "id": "4565228",
      "name": "Dylan Cozens",
-     "pos": "C"
+     "pos": "C",
+     "team": "OTT"
     },
     {
      "r": 11,
      "type": "F",
      "id": "2563036",
      "name": "Vincent Trocheck",
-     "pos": "C"
+     "pos": "C",
+     "team": "UTAH"
     },
     {
      "r": 12,
      "type": "F",
      "id": "3114732",
      "name": "Sam Bennett",
-     "pos": "C"
+     "pos": "C",
+     "team": "FLA"
     },
     {
      "r": 13,
      "type": "F",
      "id": "3042088",
      "name": "Carter Verhaeghe",
-     "pos": "C"
+     "pos": "C",
+     "team": "FLA"
     },
     {
      "r": 14,
      "type": "G",
      "id": "4064582",
      "name": "Carter Hart",
-     "pos": "G"
+     "pos": "G",
+     "team": "VGK"
     }
    ]
   },
@@ -847,91 +925,104 @@
      "type": "F",
      "id": "3114736",
      "name": "William Nylander",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "TOR"
     },
     {
      "r": 2,
      "type": "F",
      "id": "2562637",
      "name": "Mika Zibanejad",
-     "pos": "C"
+     "pos": "C",
+     "team": "NYR"
     },
     {
      "r": 3,
      "type": "F",
      "id": "4233637",
      "name": "Robert Thomas",
-     "pos": "C"
+     "pos": "C",
+     "team": "STL"
     },
     {
      "r": 4,
      "type": "F",
      "id": "3114766",
      "name": "Alex Tuch",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "WSH"
     },
     {
      "r": 5,
      "type": "F",
      "id": "5037",
      "name": "Steven Stamkos",
-     "pos": "C"
+     "pos": "C",
+     "team": "NSH"
     },
     {
      "r": 6,
      "type": "F",
      "id": "3101",
      "name": "Alex Ovechkin",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "WSH"
     },
     {
      "r": 7,
      "type": "D",
      "id": "5164",
      "name": "Erik Karlsson",
-     "pos": "D"
+     "pos": "D",
+     "team": "PIT"
     },
     {
      "r": 8,
      "type": "F",
      "id": "3124",
      "name": "Evgeni Malkin",
-     "pos": "C"
+     "pos": "C",
+     "team": "PIT"
     },
     {
      "r": 9,
      "type": "D",
      "id": "5118",
      "name": "John Carlson",
-     "pos": "D"
+     "pos": "D",
+     "team": "TB"
     },
     {
      "r": 10,
      "type": "F",
      "id": "2562629",
      "name": "Rickard Rakell",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "PIT"
     },
     {
      "r": 11,
      "type": "F",
      "id": "3042056",
      "name": "Tyler Bertuzzi",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "CHI"
     },
     {
      "r": 12,
      "type": "G",
      "id": "4196914",
      "name": "Jake Oettinger",
-     "pos": "G"
+     "pos": "G",
+     "team": "DAL"
     },
     {
      "r": 13,
      "type": "G",
      "id": "3069285",
      "name": "Linus Ullmark",
-     "pos": "G"
+     "pos": "G",
+     "team": "OTT"
     },
     {
      "r": 14,
@@ -950,91 +1041,104 @@
      "type": "F",
      "id": "4565233",
      "name": "Matt Boldy",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "MIN"
     },
     {
      "r": 2,
      "type": "F",
      "id": "3114",
      "name": "Sidney Crosby",
-     "pos": "C"
+     "pos": "C",
+     "team": "PIT"
     },
     {
      "r": 3,
      "type": "F",
      "id": "4024988",
      "name": "Tage Thompson",
-     "pos": "C"
+     "pos": "C",
+     "team": "BUF"
     },
     {
      "r": 4,
      "type": "F",
      "id": "4233555",
      "name": "Nico Hischier",
-     "pos": "C"
+     "pos": "C",
+     "team": "NJ"
     },
     {
      "r": 5,
      "type": "F",
      "id": "5149125",
      "name": "Connor Bedard",
-     "pos": "C"
+     "pos": "C",
+     "team": "CHI"
     },
     {
      "r": 6,
      "type": "F",
      "id": "4233583",
      "name": "Gabriel Vilardi",
-     "pos": "C"
+     "pos": "C",
+     "team": "WPG"
     },
     {
      "r": 7,
      "type": "F",
      "id": "3114777",
      "name": "Jared McCann",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "SEA"
     },
     {
      "r": 8,
      "type": "D",
      "id": "4565262",
      "name": "Jackson LaCombe",
-     "pos": "D"
+     "pos": "D",
+     "team": "ANA"
     },
     {
      "r": 9,
      "type": "F",
      "id": "3904091",
      "name": "Joel Eriksson Ek",
-     "pos": "C"
+     "pos": "C",
+     "team": "MIN"
     },
     {
      "r": 10,
      "type": "D",
      "id": "4697449",
      "name": "Brock Faber",
-     "pos": "D"
+     "pos": "D",
+     "team": "MIN"
     },
     {
      "r": 11,
      "type": "F",
      "id": "3114743",
      "name": "Kevin Fiala",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "LA"
     },
     {
      "r": 12,
      "type": "G",
      "id": "4588165",
      "name": "Lukas Dostal",
-     "pos": "G"
+     "pos": "G",
+     "team": "ANA"
     },
     {
      "r": 13,
      "type": "G",
      "id": "4697686",
      "name": "Jakub Dobes",
-     "pos": "G"
+     "pos": "G",
+     "team": "MTL"
     },
     {
      "r": 14,
@@ -1053,91 +1157,104 @@
      "type": "F",
      "id": "3899952",
      "name": "Kyle Connor",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "WPG"
     },
     {
      "r": 2,
      "type": "F",
      "id": "4065019",
      "name": "Brandon Hagel",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "TB"
     },
     {
      "r": 3,
      "type": "F",
      "id": "4915349",
      "name": "Juraj Slafkovsky",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "MTL"
     },
     {
      "r": 4,
      "type": "F",
      "id": "4587996",
      "name": "Kirill Marchenko",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "TOR"
     },
     {
      "r": 5,
      "type": "F",
      "id": "3899946",
      "name": "Mathew Barzal",
-     "pos": "C"
+     "pos": "C",
+     "team": "NYI"
     },
     {
      "r": 6,
      "type": "F",
      "id": "3899933",
      "name": "Dylan Strome",
-     "pos": "C"
+     "pos": "C",
+     "team": "WSH"
     },
     {
      "r": 7,
      "type": "F",
      "id": "2976844",
      "name": "Tomas Hertl",
-     "pos": "C"
+     "pos": "C",
+     "team": "VGK"
     },
     {
      "r": 8,
      "type": "F",
      "id": "3941973",
      "name": "Anthony Cirelli",
-     "pos": "C"
+     "pos": "C",
+     "team": "TB"
     },
     {
      "r": 9,
      "type": "F",
      "id": "4233566",
      "name": "Elias Pettersson",
-     "pos": "C"
+     "pos": "C",
+     "team": "VAN"
     },
     {
      "r": 10,
      "type": "F",
      "id": "4378669",
      "name": "Ryan McLeod",
-     "pos": "C"
+     "pos": "C",
+     "team": "BUF"
     },
     {
      "r": 11,
      "type": "F",
      "id": "3042050",
      "name": "Artturi Lehkonen",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "COL"
     },
     {
      "r": 12,
      "type": "G",
      "id": "3151981",
      "name": "Ilya Sorokin",
-     "pos": "G"
+     "pos": "G",
+     "team": "NYI"
     },
     {
      "r": 13,
      "type": "G",
      "id": "5571",
      "name": "Sergei Bobrovsky",
-     "pos": "G"
+     "pos": "G",
+     "team": "TOR"
     },
     {
      "r": 14,
@@ -1156,7 +1273,8 @@
      "type": "F",
      "id": "4874740",
      "name": "Wyatt Johnston",
-     "pos": "C"
+     "pos": "C",
+     "team": "DAL"
     },
     {
      "r": 2,
@@ -1169,84 +1287,96 @@
      "type": "F",
      "id": "5149153",
      "name": "Leo Carlsson",
-     "pos": "C"
+     "pos": "C",
+     "team": "ANA"
     },
     {
      "r": 4,
      "type": "D",
      "id": "5080230",
      "name": "Lane Hutson",
-     "pos": "D"
+     "pos": "D",
+     "team": "MTL"
     },
     {
      "r": 5,
      "type": "D",
      "id": "4294163",
      "name": "Rasmus Dahlin",
-     "pos": "D"
+     "pos": "D",
+     "team": "BUF"
     },
     {
      "r": 6,
      "type": "F",
      "id": "3151187",
      "name": "Brayden Point",
-     "pos": "C"
+     "pos": "C",
+     "team": "TB"
     },
     {
      "r": 7,
      "type": "G",
      "id": "4874737",
      "name": "Jesper Wallstedt",
-     "pos": "G"
+     "pos": "G",
+     "team": "MIN"
     },
     {
      "r": 8,
      "type": "F",
      "id": "5080143",
      "name": "Logan Cooley",
-     "pos": "C"
+     "pos": "C",
+     "team": "UTAH"
     },
     {
      "r": 9,
      "type": "G",
      "id": "3904177",
      "name": "Mackenzie Blackwood",
-     "pos": "G"
+     "pos": "G",
+     "team": "COL"
     },
     {
      "r": 10,
      "type": "F",
      "id": "4697383",
      "name": "Quinton Byfield",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "LA"
     },
     {
      "r": 11,
      "type": "F",
      "id": "4587943",
      "name": "Aliaksei Protas",
-     "pos": "C"
+     "pos": "C",
+     "team": "WSH"
     },
     {
      "r": 12,
      "type": "F",
      "id": "4024833",
      "name": "Pierre-Luc Dubois",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "WSH"
     },
     {
      "r": 13,
      "type": "F",
      "id": "4874899",
      "name": "Logan Stankoven",
-     "pos": "C"
+     "pos": "C",
+     "team": "CAR"
     },
     {
      "r": 14,
      "type": "F",
      "id": "4565255",
      "name": "Shane Pinto",
-     "pos": "C"
+     "pos": "C",
+     "team": "OTT"
     }
    ]
   },
@@ -1259,70 +1389,80 @@
      "type": "F",
      "id": "4565222",
      "name": "Jack Hughes",
-     "pos": "C"
+     "pos": "C",
+     "team": "NJ"
     },
     {
      "r": 2,
      "type": "D",
      "id": "4320548",
      "name": "Quinn Hughes",
-     "pos": "D"
+     "pos": "D",
+     "team": "MIN"
     },
     {
      "r": 3,
      "type": "F",
      "id": "4697384",
      "name": "Tim Stützle",
-     "pos": "C"
+     "pos": "C",
+     "team": "OTT"
     },
     {
      "r": 4,
      "type": "F",
      "id": "4697385",
      "name": "Lucas Raymond",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "DET"
     },
     {
      "r": 5,
      "type": "F",
      "id": "5291941",
      "name": "Porter Martone",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "PHI"
     },
     {
      "r": 6,
      "type": "F",
      "id": "3900169",
      "name": "Travis Konecny",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "PHI"
     },
     {
      "r": 7,
      "type": "F",
      "id": "2591155",
      "name": "Bryan Rust",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "PIT"
     },
     {
      "r": 8,
      "type": "G",
      "id": "3042109",
      "name": "Juuse Saros",
-     "pos": "G"
+     "pos": "G",
+     "team": "NSH"
     },
     {
      "r": 9,
      "type": "F",
      "id": "4697382",
      "name": "Alexis Lafreniere",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "NYR"
     },
     {
      "r": 10,
      "type": "F",
      "id": "4874721",
      "name": "William Eklund",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "OTT"
     },
     {
      "r": 11,
@@ -1335,21 +1475,24 @@
      "type": "F",
      "id": "4697446",
      "name": "Luke Evangelista",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "NJ"
     },
     {
      "r": 13,
      "type": "F",
      "id": "5080171",
      "name": "Jimmy Snuggerud",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "STL"
     },
     {
      "r": 14,
      "type": "G",
      "id": "4697394",
      "name": "Yaroslav Askarov",
-     "pos": "G"
+     "pos": "G",
+     "team": "SJ"
     }
    ]
   },
@@ -1362,91 +1505,104 @@
      "type": "F",
      "id": "3891952",
      "name": "Artemi Panarin",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "LA"
     },
     {
      "r": 2,
      "type": "F",
      "id": "3899937",
      "name": "Mitch Marner",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "VGK"
     },
     {
      "r": 3,
      "type": "F",
      "id": "4268771",
      "name": "Jesper Bratt",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "NJ"
     },
     {
      "r": 4,
      "type": "F",
      "id": "4024123",
      "name": "Auston Matthews",
-     "pos": "C"
+     "pos": "C",
+     "team": "TOR"
     },
     {
      "r": 5,
      "type": "F",
      "id": "3041970",
      "name": "Aleksander Barkov",
-     "pos": "C"
+     "pos": "C",
+     "team": "FLA"
     },
     {
      "r": 6,
      "type": "F",
      "id": "2590852",
      "name": "J.T. Miller",
-     "pos": "LW"
+     "pos": "LW",
+     "team": "NYR"
     },
     {
      "r": 7,
      "type": "F",
      "id": "3042002",
      "name": "Bo Horvat",
-     "pos": "C"
+     "pos": "C",
+     "team": "NYI"
     },
     {
      "r": 8,
      "type": "F",
      "id": "5216860",
      "name": "Ivan Demidov",
-     "pos": "RW"
+     "pos": "RW",
+     "team": "MTL"
     },
     {
      "r": 9,
      "type": "F",
      "id": "5136617",
      "name": "Adam Fantilli",
-     "pos": "C"
+     "pos": "C",
+     "team": "CBJ"
     },
     {
      "r": 10,
      "type": "F",
      "id": "5349",
      "name": "Nazem Kadri",
-     "pos": "C"
+     "pos": "C",
+     "team": "COL"
     },
     {
      "r": 11,
      "type": "D",
      "id": "4352732",
      "name": "Noah Dobson",
-     "pos": "D"
+     "pos": "D",
+     "team": "MTL"
     },
     {
      "r": 12,
      "type": "G",
      "id": "4272888",
      "name": "Logan Thompson",
-     "pos": "G"
+     "pos": "G",
+     "team": "WSH"
     },
     {
      "r": 13,
      "type": "G",
      "id": "5111",
      "name": "Jake Allen",
-     "pos": "G"
+     "pos": "G",
+     "team": "NJ"
     },
     {
      "r": 14,
