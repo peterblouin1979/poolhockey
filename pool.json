@@ -1,0 +1,1460 @@
+{
+ "name": "Blouin 2026-2027",
+ "season": 2027,
+ "start": "2026-09-29",
+ "end": "2027-04-11",
+ "scoring": {
+  "skater": {
+   "g": 1,
+   "a": 1,
+   "ht": 1
+  },
+  "goalie": {
+   "g": 1,
+   "a": 1,
+   "w": 2,
+   "so": 1
+  },
+  "team": {
+   "w": 2,
+   "otl": 1
+  }
+ },
+ "count": {
+  "total": 10,
+  "goalies": 1,
+  "teams": 1
+ },
+ "teams": {
+  "LA": {
+   "loc": "Los Angeles",
+   "name": "Kings",
+   "color": "#121212",
+   "id": "8"
+  },
+  "BOS": {
+   "loc": "Boston",
+   "name": "Bruins",
+   "color": "#231f20",
+   "id": "1"
+  },
+  "EDM": {
+   "loc": "Edmonton",
+   "name": "Oilers",
+   "color": "#00205b",
+   "id": "6"
+  },
+  "BUF": {
+   "loc": "Buffalo",
+   "name": "Sabres",
+   "color": "#00468b",
+   "id": "2"
+  },
+  "CAR": {
+   "loc": "Carolina",
+   "name": "Hurricanes",
+   "color": "#e30426",
+   "id": "7"
+  },
+  "CHI": {
+   "loc": "Chicago",
+   "name": "Blackhawks",
+   "color": "#e31937",
+   "id": "4"
+  },
+  "DET": {
+   "loc": "Detroit",
+   "name": "Red Wings",
+   "color": "#e30526",
+   "id": "5"
+  },
+  "CGY": {
+   "loc": "Calgary",
+   "name": "Flames",
+   "color": "#dd1a32",
+   "id": "3"
+  },
+  "DAL": {
+   "loc": "Dallas",
+   "name": "Stars",
+   "color": "#20864c",
+   "id": "9"
+  },
+  "NYR": {
+   "loc": "New York",
+   "name": "Rangers",
+   "color": "#0056ae",
+   "id": "13"
+  },
+  "PHI": {
+   "loc": "Philadelphia",
+   "name": "Flyers",
+   "color": "#fe5823",
+   "id": "15"
+  },
+  "OTT": {
+   "loc": "Ottawa",
+   "name": "Senators",
+   "color": "#dd1a32",
+   "id": "14"
+  },
+  "NJ": {
+   "loc": "New Jersey",
+   "name": "Devils",
+   "color": "#e30b2b",
+   "id": "11"
+  },
+  "NYI": {
+   "loc": "New York",
+   "name": "Islanders",
+   "color": "#00529b",
+   "id": "12"
+  },
+  "PIT": {
+   "loc": "Pittsburgh",
+   "name": "Penguins",
+   "color": "#000000",
+   "id": "16"
+  },
+  "MTL": {
+   "loc": "Montréal",
+   "name": "Canadiens",
+   "color": "#c41230",
+   "id": "10"
+  },
+  "ANA": {
+   "loc": "Anaheim",
+   "name": "Ducks",
+   "color": "#fc4c02",
+   "id": "25"
+  },
+  "WSH": {
+   "loc": "Washington",
+   "name": "Capitals",
+   "color": "#d71830",
+   "id": "23"
+  },
+  "SJ": {
+   "loc": "San Jose",
+   "name": "Sharks",
+   "color": "#00788a",
+   "id": "18"
+  },
+  "STL": {
+   "loc": "St. Louis",
+   "name": "Blues",
+   "color": "#0070b9",
+   "id": "19"
+  },
+  "TOR": {
+   "loc": "Toronto",
+   "name": "Maple Leafs",
+   "color": "#003e7e",
+   "id": "21"
+  },
+  "VAN": {
+   "loc": "Vancouver",
+   "name": "Canucks",
+   "color": "#003e7e",
+   "id": "22"
+  },
+  "COL": {
+   "loc": "Colorado",
+   "name": "Avalanche",
+   "color": "#860038",
+   "id": "17"
+  },
+  "TB": {
+   "loc": "Tampa Bay",
+   "name": "Lightning",
+   "color": "#003e7e",
+   "id": "20"
+  },
+  "NSH": {
+   "loc": "Nashville",
+   "name": "Predators",
+   "color": "#fdba31",
+   "id": "27"
+  },
+  "CBJ": {
+   "loc": "Columbus",
+   "name": "Blue Jackets",
+   "color": "#002d62",
+   "id": "29"
+  },
+  "MIN": {
+   "loc": "Minnesota",
+   "name": "Wild",
+   "color": "#124734",
+   "id": "30"
+  },
+  "SEA": {
+   "loc": "Seattle",
+   "name": "Kraken",
+   "color": "#000d33",
+   "id": "124292"
+  },
+  "VGK": {
+   "loc": "Vegas",
+   "name": "Golden Knights",
+   "color": "#344043",
+   "id": "37"
+  },
+  "UTAH": {
+   "loc": "Utah",
+   "name": "Mammoth",
+   "color": "#000000",
+   "id": "129764"
+  },
+  "FLA": {
+   "loc": "Florida",
+   "name": "Panthers",
+   "color": "#e51937",
+   "id": "26"
+  },
+  "WPG": {
+   "loc": "Winnipeg",
+   "name": "Jets",
+   "color": "#002d62",
+   "id": "28"
+  }
+ },
+ "participants": [
+  {
+   "id": "p1",
+   "name": "Mathis",
+   "picks": [
+    {
+     "r": 1,
+     "type": "F",
+     "id": "4024857",
+     "name": "Clayton Keller",
+     "pos": "RW"
+    },
+    {
+     "r": 2,
+     "type": "F",
+     "id": "3942335",
+     "name": "Kirill Kaprizov",
+     "pos": "LW"
+    },
+    {
+     "r": 3,
+     "type": "F",
+     "id": "3114802",
+     "name": "Adrian Kempe",
+     "pos": "RW"
+    },
+    {
+     "r": 4,
+     "type": "F",
+     "id": "5545",
+     "name": "Mark Stone",
+     "pos": "RW"
+    },
+    {
+     "r": 5,
+     "type": "F",
+     "id": "3114770",
+     "name": "Nick Schmaltz",
+     "pos": "C"
+    },
+    {
+     "r": 6,
+     "type": "F",
+     "id": "3735",
+     "name": "Patrick Kane",
+     "pos": "RW"
+    },
+    {
+     "r": 7,
+     "type": "F",
+     "id": "3899949",
+     "name": "Pavel Zacha",
+     "pos": "C"
+    },
+    {
+     "r": 8,
+     "type": "F",
+     "id": "2970615",
+     "name": "Tom Wilson",
+     "pos": "RW"
+    },
+    {
+     "r": 9,
+     "type": "D",
+     "id": "5436",
+     "name": "Roman Josi",
+     "pos": "D"
+    },
+    {
+     "r": 10,
+     "type": "F",
+     "id": "2562624",
+     "name": "Ryan Nugent-Hopkins",
+     "pos": "C"
+    },
+    {
+     "r": 11,
+     "type": "F",
+     "id": "3899979",
+     "name": "Brock Boeser",
+     "pos": "RW"
+    },
+    {
+     "r": 12,
+     "type": "T",
+     "team": "VGK",
+     "name": "Golden Knights"
+    },
+    {
+     "r": 13,
+     "type": "G",
+     "id": "4712036",
+     "name": "Jeremy Swayman",
+     "pos": "G"
+    },
+    {
+     "r": 14,
+     "type": "G",
+     "id": "5188366",
+     "name": "Sergei Murashov",
+     "pos": "G"
+    }
+   ]
+  },
+  {
+   "id": "p2",
+   "name": "Jacob",
+   "picks": [
+    {
+     "r": 1,
+     "type": "D",
+     "id": "4352722",
+     "name": "Evan Bouchard",
+     "pos": "D"
+    },
+    {
+     "r": 2,
+     "type": "F",
+     "id": "2968772",
+     "name": "Filip Forsberg",
+     "pos": "LW"
+    },
+    {
+     "r": 3,
+     "type": "F",
+     "id": "4271734",
+     "name": "Drake Batherson",
+     "pos": "RW"
+    },
+    {
+     "r": 4,
+     "type": "F",
+     "id": "5160",
+     "name": "John Tavares",
+     "pos": "C"
+    },
+    {
+     "r": 5,
+     "type": "F",
+     "id": "5798",
+     "name": "Brock Nelson",
+     "pos": "C"
+    },
+    {
+     "r": 6,
+     "type": "F",
+     "id": "5216858",
+     "name": "Beckett Sennecke",
+     "pos": "RW"
+    },
+    {
+     "r": 7,
+     "type": "F",
+     "id": "4587588",
+     "name": "Pavel Dorofeyev",
+     "pos": "RW"
+    },
+    {
+     "r": 8,
+     "type": "F",
+     "id": "2555315",
+     "name": "Charlie Coyle",
+     "pos": "C"
+    },
+    {
+     "r": 9,
+     "type": "D",
+     "id": "4565227",
+     "name": "Moritz Seider",
+     "pos": "D"
+    },
+    {
+     "r": 10,
+     "type": "D",
+     "id": "3988803",
+     "name": "Charlie McAvoy",
+     "pos": "D"
+    },
+    {
+     "r": 11,
+     "type": "D",
+     "id": "4697386",
+     "name": "Jake Sanderson",
+     "pos": "D"
+    },
+    {
+     "r": 12,
+     "type": "G",
+     "id": "5622",
+     "name": "Scott Wedgewood",
+     "pos": "G"
+    },
+    {
+     "r": 13,
+     "type": "G",
+     "id": "4233889",
+     "name": "Ukko-Pekka Luukkonen",
+     "pos": "G"
+    },
+    {
+     "r": 14,
+     "type": "T",
+     "team": "DAL",
+     "name": "Stars"
+    }
+   ]
+  },
+  {
+   "id": "p3",
+   "name": "Pat",
+   "picks": [
+    {
+     "r": 1,
+     "type": "F",
+     "id": "3899938",
+     "name": "Mikko Rantanen",
+     "pos": "RW"
+    },
+    {
+     "r": 2,
+     "type": "G",
+     "id": "2976847",
+     "name": "Andrei Vasilevskiy",
+     "pos": "G"
+    },
+    {
+     "r": 3,
+     "type": "D",
+     "id": "3899972",
+     "name": "Zach Werenski",
+     "pos": "D"
+    },
+    {
+     "r": 4,
+     "type": "T",
+     "team": "MTL",
+     "name": "Canadiens"
+    },
+    {
+     "r": 5,
+     "type": "F",
+     "id": "3114722",
+     "name": "Sam Reinhart",
+     "pos": "C"
+    },
+    {
+     "r": 6,
+     "type": "F",
+     "id": "4319858",
+     "name": "Brady Tkachuk",
+     "pos": "LW"
+    },
+    {
+     "r": 7,
+     "type": "F",
+     "id": "5149155",
+     "name": "Will Smith",
+     "pos": "C"
+    },
+    {
+     "r": 8,
+     "type": "D",
+     "id": "4233536",
+     "name": "Miro Heiskanen",
+     "pos": "D"
+    },
+    {
+     "r": 9,
+     "type": "F",
+     "id": "5509",
+     "name": "Zach Hyman",
+     "pos": "LW"
+    },
+    {
+     "r": 10,
+     "type": "F",
+     "id": "5103645",
+     "name": "Jackson Blake",
+     "pos": "RW"
+    },
+    {
+     "r": 11,
+     "type": "G",
+     "id": "5452",
+     "name": "Jacob Markstrom",
+     "pos": "G"
+    },
+    {
+     "r": 12,
+     "type": "F",
+     "id": "4062251",
+     "name": "Jordan Kyrou",
+     "pos": "RW"
+    },
+    {
+     "r": 13,
+     "type": "F",
+     "id": "4874870",
+     "name": "Josh Doan",
+     "pos": "RW"
+    },
+    {
+     "r": 14,
+     "type": "F",
+     "id": "5149170",
+     "name": "Matvei Michkov",
+     "pos": "RW"
+    }
+   ]
+  },
+  {
+   "id": "p4",
+   "name": "Pete",
+   "picks": [
+    {
+     "r": 1,
+     "type": "F",
+     "id": "3648002",
+     "name": "Jack Eichel",
+     "pos": "C"
+    },
+    {
+     "r": 2,
+     "type": "D",
+     "id": "4233563",
+     "name": "Cale Makar",
+     "pos": "D"
+    },
+    {
+     "r": 3,
+     "type": "F",
+     "id": "3114741",
+     "name": "Nikolaj Ehlers",
+     "pos": "LW"
+    },
+    {
+     "r": 4,
+     "type": "F",
+     "id": "4874723",
+     "name": "Dylan Guenther",
+     "pos": "RW"
+    },
+    {
+     "r": 5,
+     "type": "F",
+     "id": "4697396",
+     "name": "Seth Jarvis",
+     "pos": "C"
+    },
+    {
+     "r": 6,
+     "type": "F",
+     "id": "4268466",
+     "name": "Morgan Geekie",
+     "pos": "C"
+    },
+    {
+     "r": 7,
+     "type": "F",
+     "id": "5080145",
+     "name": "Cutter Gauthier",
+     "pos": "LW"
+    },
+    {
+     "r": 8,
+     "type": "D",
+     "id": "5291933",
+     "name": "Matthew Schaefer",
+     "pos": "D"
+    },
+    {
+     "r": 9,
+     "type": "F",
+     "id": "4697397",
+     "name": "Dylan Holloway",
+     "pos": "LW"
+    },
+    {
+     "r": 10,
+     "type": "D",
+     "id": "4024868",
+     "name": "Mikhail Sergachev",
+     "pos": "D"
+    },
+    {
+     "r": 11,
+     "type": "F",
+     "id": "5342529",
+     "name": "Gavin McKenna",
+     "pos": "LW"
+    },
+    {
+     "r": 12,
+     "type": "G",
+     "id": "3942065",
+     "name": "Karel Vejmelka",
+     "pos": "G"
+    },
+    {
+     "r": 13,
+     "type": "G",
+     "id": "3020225",
+     "name": "Connor Hellebuyck",
+     "pos": "G"
+    },
+    {
+     "r": 14,
+     "type": "T",
+     "team": "EDM",
+     "name": "Oilers"
+    }
+   ]
+  },
+  {
+   "id": "p5",
+   "name": "Eva",
+   "picks": [
+    {
+     "r": 1,
+     "type": "F",
+     "id": "4565236",
+     "name": "Cole Caufield",
+     "pos": "RW"
+    },
+    {
+     "r": 2,
+     "type": "F",
+     "id": "4024854",
+     "name": "Matthew Tkachuk",
+     "pos": "LW"
+    },
+    {
+     "r": 3,
+     "type": "F",
+     "id": "3114755",
+     "name": "Dylan Larkin",
+     "pos": "C"
+    },
+    {
+     "r": 4,
+     "type": "F",
+     "id": "4352683",
+     "name": "Andrei Svechnikov",
+     "pos": "LW"
+    },
+    {
+     "r": 5,
+     "type": "D",
+     "id": "3149843",
+     "name": "Darren Raddysh",
+     "pos": "D"
+    },
+    {
+     "r": 6,
+     "type": "F",
+     "id": "4565230",
+     "name": "Trevor Zegras",
+     "pos": "C"
+    },
+    {
+     "r": 7,
+     "type": "F",
+     "id": "3114985",
+     "name": "Ivan Barbashev",
+     "pos": "LW"
+    },
+    {
+     "r": 8,
+     "type": "D",
+     "id": "4024950",
+     "name": "Jakob Chychrun",
+     "pos": "D"
+    },
+    {
+     "r": 9,
+     "type": "F",
+     "id": "3904183",
+     "name": "Roope Hintz",
+     "pos": "C"
+    },
+    {
+     "r": 10,
+     "type": "F",
+     "id": "3042037",
+     "name": "Anthony Mantha",
+     "pos": "RW"
+    },
+    {
+     "r": 11,
+     "type": "F",
+     "id": "3042017",
+     "name": "Alexander Wennberg",
+     "pos": "C"
+    },
+    {
+     "r": 12,
+     "type": "G",
+     "id": "3942459",
+     "name": "Dan Vladar",
+     "pos": "G"
+    },
+    {
+     "r": 13,
+     "type": "G",
+     "id": "2590824",
+     "name": "John Gibson",
+     "pos": "G"
+    },
+    {
+     "r": 14,
+     "type": "T",
+     "team": "FLA",
+     "name": "Panthers"
+    }
+   ]
+  },
+  {
+   "id": "p6",
+   "name": "Ben",
+   "picks": [
+    {
+     "r": 1,
+     "type": "F",
+     "id": "3042083",
+     "name": "Jake Guentzel",
+     "pos": "C"
+    },
+    {
+     "r": 2,
+     "type": "T",
+     "team": "TB",
+     "name": "Lightning"
+    },
+    {
+     "r": 3,
+     "type": "F",
+     "id": "3904173",
+     "name": "Sebastian Aho",
+     "pos": "C"
+    },
+    {
+     "r": 4,
+     "type": "F",
+     "id": "4063433",
+     "name": "Alex DeBrincat",
+     "pos": "RW"
+    },
+    {
+     "r": 5,
+     "type": "D",
+     "id": "4197146",
+     "name": "Adam Fox",
+     "pos": "D"
+    },
+    {
+     "r": 6,
+     "type": "F",
+     "id": "5208",
+     "name": "Ryan O'Reilly",
+     "pos": "C"
+    },
+    {
+     "r": 7,
+     "type": "G",
+     "id": "4996097",
+     "name": "Brandon Bussi",
+     "pos": "G"
+    },
+    {
+     "r": 8,
+     "type": "F",
+     "id": "4874919",
+     "name": "Matthew Knies",
+     "pos": "LW"
+    },
+    {
+     "r": 9,
+     "type": "D",
+     "id": "3042016",
+     "name": "Josh Morrissey",
+     "pos": "D"
+    },
+    {
+     "r": 10,
+     "type": "F",
+     "id": "4565228",
+     "name": "Dylan Cozens",
+     "pos": "C"
+    },
+    {
+     "r": 11,
+     "type": "F",
+     "id": "2563036",
+     "name": "Vincent Trocheck",
+     "pos": "C"
+    },
+    {
+     "r": 12,
+     "type": "F",
+     "id": "3114732",
+     "name": "Sam Bennett",
+     "pos": "C"
+    },
+    {
+     "r": 13,
+     "type": "F",
+     "id": "3042088",
+     "name": "Carter Verhaeghe",
+     "pos": "C"
+    },
+    {
+     "r": 14,
+     "type": "G",
+     "id": "4064582",
+     "name": "Carter Hart",
+     "pos": "G"
+    }
+   ]
+  },
+  {
+   "id": "p7",
+   "name": "Stephane",
+   "picks": [
+    {
+     "r": 1,
+     "type": "F",
+     "id": "3114736",
+     "name": "William Nylander",
+     "pos": "RW"
+    },
+    {
+     "r": 2,
+     "type": "F",
+     "id": "2562637",
+     "name": "Mika Zibanejad",
+     "pos": "C"
+    },
+    {
+     "r": 3,
+     "type": "F",
+     "id": "4233637",
+     "name": "Robert Thomas",
+     "pos": "C"
+    },
+    {
+     "r": 4,
+     "type": "F",
+     "id": "3114766",
+     "name": "Alex Tuch",
+     "pos": "RW"
+    },
+    {
+     "r": 5,
+     "type": "F",
+     "id": "5037",
+     "name": "Steven Stamkos",
+     "pos": "C"
+    },
+    {
+     "r": 6,
+     "type": "F",
+     "id": "3101",
+     "name": "Alex Ovechkin",
+     "pos": "LW"
+    },
+    {
+     "r": 7,
+     "type": "D",
+     "id": "5164",
+     "name": "Erik Karlsson",
+     "pos": "D"
+    },
+    {
+     "r": 8,
+     "type": "F",
+     "id": "3124",
+     "name": "Evgeni Malkin",
+     "pos": "C"
+    },
+    {
+     "r": 9,
+     "type": "D",
+     "id": "5118",
+     "name": "John Carlson",
+     "pos": "D"
+    },
+    {
+     "r": 10,
+     "type": "F",
+     "id": "2562629",
+     "name": "Rickard Rakell",
+     "pos": "RW"
+    },
+    {
+     "r": 11,
+     "type": "F",
+     "id": "3042056",
+     "name": "Tyler Bertuzzi",
+     "pos": "LW"
+    },
+    {
+     "r": 12,
+     "type": "G",
+     "id": "4196914",
+     "name": "Jake Oettinger",
+     "pos": "G"
+    },
+    {
+     "r": 13,
+     "type": "G",
+     "id": "3069285",
+     "name": "Linus Ullmark",
+     "pos": "G"
+    },
+    {
+     "r": 14,
+     "type": "T",
+     "team": "NYI",
+     "name": "Islanders"
+    }
+   ]
+  },
+  {
+   "id": "p8",
+   "name": "Jack the Snake",
+   "picks": [
+    {
+     "r": 1,
+     "type": "F",
+     "id": "4565233",
+     "name": "Matt Boldy",
+     "pos": "LW"
+    },
+    {
+     "r": 2,
+     "type": "F",
+     "id": "3114",
+     "name": "Sidney Crosby",
+     "pos": "C"
+    },
+    {
+     "r": 3,
+     "type": "F",
+     "id": "4024988",
+     "name": "Tage Thompson",
+     "pos": "C"
+    },
+    {
+     "r": 4,
+     "type": "F",
+     "id": "4233555",
+     "name": "Nico Hischier",
+     "pos": "C"
+    },
+    {
+     "r": 5,
+     "type": "F",
+     "id": "5149125",
+     "name": "Connor Bedard",
+     "pos": "C"
+    },
+    {
+     "r": 6,
+     "type": "F",
+     "id": "4233583",
+     "name": "Gabriel Vilardi",
+     "pos": "C"
+    },
+    {
+     "r": 7,
+     "type": "F",
+     "id": "3114777",
+     "name": "Jared McCann",
+     "pos": "LW"
+    },
+    {
+     "r": 8,
+     "type": "D",
+     "id": "4565262",
+     "name": "Jackson LaCombe",
+     "pos": "D"
+    },
+    {
+     "r": 9,
+     "type": "F",
+     "id": "3904091",
+     "name": "Joel Eriksson Ek",
+     "pos": "C"
+    },
+    {
+     "r": 10,
+     "type": "D",
+     "id": "4697449",
+     "name": "Brock Faber",
+     "pos": "D"
+    },
+    {
+     "r": 11,
+     "type": "F",
+     "id": "3114743",
+     "name": "Kevin Fiala",
+     "pos": "LW"
+    },
+    {
+     "r": 12,
+     "type": "G",
+     "id": "4588165",
+     "name": "Lukas Dostal",
+     "pos": "G"
+    },
+    {
+     "r": 13,
+     "type": "G",
+     "id": "4697686",
+     "name": "Jakub Dobes",
+     "pos": "G"
+    },
+    {
+     "r": 14,
+     "type": "T",
+     "team": "COL",
+     "name": "Avalanche"
+    }
+   ]
+  },
+  {
+   "id": "p9",
+   "name": "Michel G",
+   "picks": [
+    {
+     "r": 1,
+     "type": "F",
+     "id": "3899952",
+     "name": "Kyle Connor",
+     "pos": "LW"
+    },
+    {
+     "r": 2,
+     "type": "F",
+     "id": "4065019",
+     "name": "Brandon Hagel",
+     "pos": "LW"
+    },
+    {
+     "r": 3,
+     "type": "F",
+     "id": "4915349",
+     "name": "Juraj Slafkovsky",
+     "pos": "LW"
+    },
+    {
+     "r": 4,
+     "type": "F",
+     "id": "4587996",
+     "name": "Kirill Marchenko",
+     "pos": "RW"
+    },
+    {
+     "r": 5,
+     "type": "F",
+     "id": "3899946",
+     "name": "Mathew Barzal",
+     "pos": "C"
+    },
+    {
+     "r": 6,
+     "type": "F",
+     "id": "3899933",
+     "name": "Dylan Strome",
+     "pos": "C"
+    },
+    {
+     "r": 7,
+     "type": "F",
+     "id": "2976844",
+     "name": "Tomas Hertl",
+     "pos": "C"
+    },
+    {
+     "r": 8,
+     "type": "F",
+     "id": "3941973",
+     "name": "Anthony Cirelli",
+     "pos": "C"
+    },
+    {
+     "r": 9,
+     "type": "F",
+     "id": "4233566",
+     "name": "Elias Pettersson",
+     "pos": "C"
+    },
+    {
+     "r": 10,
+     "type": "F",
+     "id": "4378669",
+     "name": "Ryan McLeod",
+     "pos": "C"
+    },
+    {
+     "r": 11,
+     "type": "F",
+     "id": "3042050",
+     "name": "Artturi Lehkonen",
+     "pos": "LW"
+    },
+    {
+     "r": 12,
+     "type": "G",
+     "id": "3151981",
+     "name": "Ilya Sorokin",
+     "pos": "G"
+    },
+    {
+     "r": 13,
+     "type": "G",
+     "id": "5571",
+     "name": "Sergei Bobrovsky",
+     "pos": "G"
+    },
+    {
+     "r": 14,
+     "type": "T",
+     "team": "BUF",
+     "name": "Sabres"
+    }
+   ]
+  },
+  {
+   "id": "p10",
+   "name": "Michel H",
+   "picks": [
+    {
+     "r": 1,
+     "type": "F",
+     "id": "4874740",
+     "name": "Wyatt Johnston",
+     "pos": "C"
+    },
+    {
+     "r": 2,
+     "type": "T",
+     "team": "CAR",
+     "name": "Hurricanes"
+    },
+    {
+     "r": 3,
+     "type": "F",
+     "id": "5149153",
+     "name": "Leo Carlsson",
+     "pos": "C"
+    },
+    {
+     "r": 4,
+     "type": "D",
+     "id": "5080230",
+     "name": "Lane Hutson",
+     "pos": "D"
+    },
+    {
+     "r": 5,
+     "type": "D",
+     "id": "4294163",
+     "name": "Rasmus Dahlin",
+     "pos": "D"
+    },
+    {
+     "r": 6,
+     "type": "F",
+     "id": "3151187",
+     "name": "Brayden Point",
+     "pos": "C"
+    },
+    {
+     "r": 7,
+     "type": "G",
+     "id": "4874737",
+     "name": "Jesper Wallstedt",
+     "pos": "G"
+    },
+    {
+     "r": 8,
+     "type": "F",
+     "id": "5080143",
+     "name": "Logan Cooley",
+     "pos": "C"
+    },
+    {
+     "r": 9,
+     "type": "G",
+     "id": "3904177",
+     "name": "Mackenzie Blackwood",
+     "pos": "G"
+    },
+    {
+     "r": 10,
+     "type": "F",
+     "id": "4697383",
+     "name": "Quinton Byfield",
+     "pos": "RW"
+    },
+    {
+     "r": 11,
+     "type": "F",
+     "id": "4587943",
+     "name": "Aliaksei Protas",
+     "pos": "C"
+    },
+    {
+     "r": 12,
+     "type": "F",
+     "id": "4024833",
+     "name": "Pierre-Luc Dubois",
+     "pos": "LW"
+    },
+    {
+     "r": 13,
+     "type": "F",
+     "id": "4874899",
+     "name": "Logan Stankoven",
+     "pos": "C"
+    },
+    {
+     "r": 14,
+     "type": "F",
+     "id": "4565255",
+     "name": "Shane Pinto",
+     "pos": "C"
+    }
+   ]
+  },
+  {
+   "id": "p11",
+   "name": "Camille",
+   "picks": [
+    {
+     "r": 1,
+     "type": "F",
+     "id": "4565222",
+     "name": "Jack Hughes",
+     "pos": "C"
+    },
+    {
+     "r": 2,
+     "type": "D",
+     "id": "4320548",
+     "name": "Quinn Hughes",
+     "pos": "D"
+    },
+    {
+     "r": 3,
+     "type": "F",
+     "id": "4697384",
+     "name": "Tim Stützle",
+     "pos": "C"
+    },
+    {
+     "r": 4,
+     "type": "F",
+     "id": "4697385",
+     "name": "Lucas Raymond",
+     "pos": "LW"
+    },
+    {
+     "r": 5,
+     "type": "F",
+     "id": "5291941",
+     "name": "Porter Martone",
+     "pos": "RW"
+    },
+    {
+     "r": 6,
+     "type": "F",
+     "id": "3900169",
+     "name": "Travis Konecny",
+     "pos": "RW"
+    },
+    {
+     "r": 7,
+     "type": "F",
+     "id": "2591155",
+     "name": "Bryan Rust",
+     "pos": "RW"
+    },
+    {
+     "r": 8,
+     "type": "G",
+     "id": "3042109",
+     "name": "Juuse Saros",
+     "pos": "G"
+    },
+    {
+     "r": 9,
+     "type": "F",
+     "id": "4697382",
+     "name": "Alexis Lafreniere",
+     "pos": "LW"
+    },
+    {
+     "r": 10,
+     "type": "F",
+     "id": "4874721",
+     "name": "William Eklund",
+     "pos": "LW"
+    },
+    {
+     "r": 11,
+     "type": "T",
+     "team": "MIN",
+     "name": "Wild"
+    },
+    {
+     "r": 12,
+     "type": "F",
+     "id": "4697446",
+     "name": "Luke Evangelista",
+     "pos": "RW"
+    },
+    {
+     "r": 13,
+     "type": "F",
+     "id": "5080171",
+     "name": "Jimmy Snuggerud",
+     "pos": "RW"
+    },
+    {
+     "r": 14,
+     "type": "G",
+     "id": "4697394",
+     "name": "Yaroslav Askarov",
+     "pos": "G"
+    }
+   ]
+  },
+  {
+   "id": "p12",
+   "name": "Steve",
+   "picks": [
+    {
+     "r": 1,
+     "type": "F",
+     "id": "3891952",
+     "name": "Artemi Panarin",
+     "pos": "LW"
+    },
+    {
+     "r": 2,
+     "type": "F",
+     "id": "3899937",
+     "name": "Mitch Marner",
+     "pos": "RW"
+    },
+    {
+     "r": 3,
+     "type": "F",
+     "id": "4268771",
+     "name": "Jesper Bratt",
+     "pos": "LW"
+    },
+    {
+     "r": 4,
+     "type": "F",
+     "id": "4024123",
+     "name": "Auston Matthews",
+     "pos": "C"
+    },
+    {
+     "r": 5,
+     "type": "F",
+     "id": "3041970",
+     "name": "Aleksander Barkov",
+     "pos": "C"
+    },
+    {
+     "r": 6,
+     "type": "F",
+     "id": "2590852",
+     "name": "J.T. Miller",
+     "pos": "LW"
+    },
+    {
+     "r": 7,
+     "type": "F",
+     "id": "3042002",
+     "name": "Bo Horvat",
+     "pos": "C"
+    },
+    {
+     "r": 8,
+     "type": "F",
+     "id": "5216860",
+     "name": "Ivan Demidov",
+     "pos": "RW"
+    },
+    {
+     "r": 9,
+     "type": "F",
+     "id": "5136617",
+     "name": "Adam Fantilli",
+     "pos": "C"
+    },
+    {
+     "r": 10,
+     "type": "F",
+     "id": "5349",
+     "name": "Nazem Kadri",
+     "pos": "C"
+    },
+    {
+     "r": 11,
+     "type": "D",
+     "id": "4352732",
+     "name": "Noah Dobson",
+     "pos": "D"
+    },
+    {
+     "r": 12,
+     "type": "G",
+     "id": "4272888",
+     "name": "Logan Thompson",
+     "pos": "G"
+    },
+    {
+     "r": 13,
+     "type": "G",
+     "id": "5111",
+     "name": "Jake Allen",
+     "pos": "G"
+    },
+    {
+     "r": 14,
+     "type": "T",
+     "team": "UTAH",
+     "name": "Mammoth"
+    }
+   ]
+  }
+ ]
+}
