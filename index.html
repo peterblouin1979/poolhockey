@@ -415,9 +415,9 @@ function renderHero(){
 /* ---------- Render: standings ---------- */
 function renderStandings(){
   const cell = (n, cls) => `<td class="${n > 0 ? cls || "" : "zero"}">${n > 0 ? "+" + n : n < 0 ? n : "0"}</td>`;
-  $("#std").innerHTML = `<thead><tr><th>Pos</th><th class="l">Participant</th><th>PJ</th><th>B</th><th>P</th><th>TC</th><th>Ce soir</th><th>7 j</th><th>30 j</th><th>PPts</th><th>PPts/PJ</th><th>Dép.</th><th>Écart</th></tr></thead><tbody>` +
-    R.now.map(r => `<tr class="g${r.rank}" data-p="${r.p.id}" tabindex="0"><td class="pos">${r.rank}</td><td class="l nm">${esc(r.p.name)}</td><td>${r.gp}</td><td>${r.b}</td><td>${r.pa}</td><td>${r.tc}</td>
-      ${cell(r.tonight, "tonight")}${cell(r.w7)}${cell(r.w30)}<td class="pts">${r.pts}</td><td>${r.gp ? (r.pts / r.gp).toFixed(2).replace(".", ",") : "0,00"}</td>
+  $("#std").innerHTML = `<thead><tr><th>Pos</th><th class="l">Participant</th><th>PPts</th><th>B</th><th>P</th><th>PJ</th><th>TC</th><th>Ce soir</th><th>7 j</th><th>30 j</th><th>PPts/PJ</th><th>Dép.</th><th>Écart</th></tr></thead><tbody>` +
+    R.now.map(r => `<tr class="g${r.rank}" data-p="${r.p.id}" tabindex="0"><td class="pos">${r.rank}</td><td class="l nm">${esc(r.p.name)}</td><td class="pts">${r.pts}</td><td>${r.b}</td><td>${r.pa}</td><td>${r.gp}</td><td>${r.tc}</td>
+      ${cell(r.tonight, "tonight")}${cell(r.w7)}${cell(r.w30)}<td>${r.gp ? (r.pts / r.gp).toFixed(2).replace(".", ",") : "0,00"}</td>
       <td class="${r.dep > 0 ? "up" : r.dep < 0 ? "dn" : "zero"}">${r.dep > 0 ? "▲" + r.dep : r.dep < 0 ? "▼" + (-r.dep) : "—"}</td><td>${r.gap}</td></tr>`).join("") + "</tbody>";
 }
 
