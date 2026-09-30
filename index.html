@@ -226,7 +226,7 @@ footer .wrap{display:grid;gap:6px;border-top:1px solid var(--line);padding-top:1
 </header>
 
 <nav class="nav" aria-label="Sections"><div class="wrap">
-  <a href="#classement">Classement</a><a href="#soir">Ce soir</a><a href="#alignements">Alignements</a><a href="#meneurs">Meneurs</a><a href="#nouvelles">Nouvelles LNH</a><a href="#reglements">Règlements</a>
+  <a href="#classement">Classement</a><a href="#alignements">Alignements</a><a href="#soir">Ce soir</a><a href="#meneurs">Meneurs</a><a href="#nouvelles">Nouvelles LNH</a><a href="#reglements">Règlements</a>
 </div></nav>
 
 <main class="wrap">
@@ -236,15 +236,6 @@ footer .wrap{display:grid;gap:6px;border-top:1px solid var(--line);padding-top:1
     <p class="help">PJ : matchs joués par les choix qui comptent · Dép. : changement de rang depuis hier · En cas d'égalité, le moins de matchs joués passe devant.</p>
   </section>
 
-  <section class="block" id="soir">
-    <div class="sec-head">
-      <div><span class="eyebrow">Matchs et points de la soirée</span><h2>Ce soir</h2></div>
-      <div class="day-nav"><button class="btn icon" id="dPrev" aria-label="Jour précédent">&#8592;</button><span class="day-title" id="dTitle"></span><button class="btn icon" id="dNext" aria-label="Jour suivant">&#8594;</button></div>
-    </div>
-    <div class="nightly" id="nightly"></div>
-    <div class="games" id="games"></div>
-  </section>
-
   <section class="block" id="alignements">
     <div class="sec-head"><div><span class="eyebrow">14 choix chacun</span><h2>Alignements</h2></div><p>En vert, les 10 choix qui comptent en ce moment : 8 patineurs, 1 gardien et 1 équipe.</p></div>
     <div class="chips" id="chips" role="group" aria-label="Participant"></div>
@@ -252,6 +243,15 @@ footer .wrap{display:grid;gap:6px;border-top:1px solid var(--line);padding-top:1
       <div class="lu-head" id="luHead"></div>
       <div style="overflow-x:auto"><table class="lu" id="lu"></table></div>
     </div>
+  </section>
+
+  <section class="block" id="soir">
+    <div class="sec-head">
+      <div><span class="eyebrow">Matchs et points de la soirée</span><h2>Ce soir</h2></div>
+      <div class="day-nav"><button class="btn icon" id="dPrev" aria-label="Jour précédent">&#8592;</button><span class="day-title" id="dTitle"></span><button class="btn icon" id="dNext" aria-label="Jour suivant">&#8594;</button></div>
+    </div>
+    <div class="nightly" id="nightly"></div>
+    <div class="games" id="games"></div>
   </section>
 
   <section class="block" id="meneurs">
