@@ -11,6 +11,13 @@ const clean = (s) => decode(String(s || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/
 const tag = (x, t) => { const m = x.match(new RegExp(`<${t}[^>]*>([\\s\\S]*?)</${t}>`, "i")); return m ? m[1] : ""; };
 const attr = (x, t, a) => { const m = x.match(new RegExp(`<${t}[^>]*\\s${a}="([^"]+)"`, "i")); return m ? decode(m[1]) : ""; };
 
+// Le fil RDS indique parfois l'heure UTC suivie de « -0400 » : une date dans le futur est relue comme UTC.
+function fixDate(raw){
+  let d = new Date(raw);
+  if (d - Date.now() > 5 * 60e3) d = new Date(raw.replace(/\s[+-]\d{4}$/, " +0000"));
+  return isNaN(d) ? "" : d.toISOString();
+}
+
 const r = await fetch(FEED, { headers: { "User-Agent": "pool-blouin/1.0" } });
 if (!r.ok) { console.log("RDS indisponible :", r.status); process.exit(0); }
 const xml = await r.text();
@@ -20,11 +27,11 @@ const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)].map((m) => {
   return {
     title: clean(tag(x, "title")),
     link: clean(tag(x, "link")),
-    date: new Date(clean(tag(x, "pubDate"))).toISOString(),
+    date: fixDate(clean(tag(x, "pubDate"))),
     img: attr(x, "media:content", "url") || attr(x, "enclosure", "url") || attr(x, "media:thumbnail", "url"),
     desc: desc.length > 220 ? desc.slice(0, 217).replace(/\s+\S*$/, "") + "…" : desc,
   };
-}).filter((n) => n.title && /^https:\/\/www\.rds\.ca\//.test(n.link) && !isNaN(new Date(n.date)));
+}).filter((n) => n.title && /^https:\/\/www\.rds\.ca\//.test(n.link) && n.date);
 items.sort((a, b) => b.date.localeCompare(a.date));
 const out = { items: items.slice(0, 3) };
 const prev = existsSync("news.json") ? readFileSync("news.json", "utf8") : "";
