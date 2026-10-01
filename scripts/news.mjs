@@ -18,6 +18,9 @@ function fixDate(raw){
   return isNaN(d) ? "" : d.toISOString();
 }
 
+// Images RDS : on demande une version 640 × 360 au lieu de l'original (plusieurs Mo)
+const smallImg = (u) => !u ? "" : /[?&]width=\d+/.test(u) ? u.replace(/([?&])width=\d+/, "$1width=640").replace(/([?&])height=\d+/, "$1height=360") : u + (u.includes("?") ? "&" : "?") + "smart=true&width=640&height=360";
+
 const r = await fetch(FEED, { headers: { "User-Agent": "pool-blouin/1.0" } });
 if (!r.ok) { console.log("RDS indisponible :", r.status); process.exit(0); }
 const xml = await r.text();
@@ -28,7 +31,7 @@ const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/gi)].map((m) => {
     title: clean(tag(x, "title")),
     link: clean(tag(x, "link")),
     date: fixDate(clean(tag(x, "pubDate"))),
-    img: attr(x, "media:content", "url") || attr(x, "enclosure", "url") || attr(x, "media:thumbnail", "url"),
+    img: smallImg(attr(x, "media:content", "url") || attr(x, "enclosure", "url") || attr(x, "media:thumbnail", "url")),
     desc: desc.length > 220 ? desc.slice(0, 217).replace(/\s+\S*$/, "") + "…" : desc,
   };
 }).filter((n) => n.title && /^https:\/\/www\.rds\.ca\//.test(n.link) && n.date);
