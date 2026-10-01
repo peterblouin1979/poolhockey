@@ -283,6 +283,44 @@ table.tb{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .lb .tm.sm{width:18px;height:18px}
 .lb .free{color:var(--faint);font-size:.8rem}
 
+.ns{display:none}
+/* Cellulaire : seulement les colonnes essentielles (les autres restent visibles sur un plus grand écran) */
+@media (max-width:640px){
+  .std th,.std td{padding:5px 6px}
+  #std th:nth-child(n+6):not(:nth-child(8)),#std td:nth-child(n+6):not(:nth-child(8)){display:none}
+  .lu th,.lu td{padding:4px 6px}
+  #lu th:nth-child(1),#lu td:nth-child(1),#lu th:nth-child(6),#lu td:nth-child(6),#lu th:nth-child(7),#lu td:nth-child(7),#lu th:nth-child(8),#lu td:nth-child(8),#lu th:nth-child(10),#lu td:nth-child(10){display:none}
+  #lu .pl small{display:none}
+  .tb th,.tb td{padding:4px 5px}
+  .tb th:nth-child(8),.tb td:nth-child(8),.tb th:nth-child(9),.tb td:nth-child(9){display:none}
+  #scorers th:nth-child(6),#scorers td:nth-child(6){display:none}
+  #scorers .pl small{display:none}
+  .help.cols{display:none}
+  .nf{display:none} .ns{display:inline}
+  .std th,.std td{padding:5px 5px}
+  .std thead th{font-size:.62rem;letter-spacing:.04em}
+  #lu .stt,#scorers .stt{font-size:0;padding:0;width:9px;height:9px;border-radius:50%;flex:none}
+  #lu .stt.out{background:#ff6b6b} #lu .stt.dtd{background:var(--gold)} #lu .stt.susp{background:#c58cff} #lu .stt.nc{background:var(--muted)}
+  #scorers .owner{font-size:.55rem;padding:3px 5px}
+  /* Largeurs fixes : la colonne du nom prend l'espace qui reste et se coupe avec « … » au besoin */
+  #lu,#scorers,.tb{table-layout:fixed}
+  #lu .pl,#scorers .pl{gap:6px;min-width:0;overflow:hidden}
+  #lu .pl b,#scorers .pl b{min-width:0;overflow:hidden;text-overflow:ellipsis}
+  #lu .hs,#lu .tm,#scorers .hs{width:22px;height:22px}
+  #lu thead th,#scorers thead th{white-space:normal;line-height:1.1}
+  #lu th,#lu td{padding:4px 3px} #lu td.l,#lu th.l{padding-left:6px} #lu th:last-child,#lu td:nth-child(9){padding-right:6px}
+  #lu th:nth-child(3){width:36px} #lu th:nth-child(4),#lu th:nth-child(5){width:26px} #lu th:nth-child(9){width:48px}
+  #scorers th,#scorers td{padding:4px 3px} #scorers td.nm2{padding-left:4px}
+  #scorers th:nth-child(1){width:26px} #scorers th:nth-child(3){width:34px} #scorers th:nth-child(4),#scorers th:nth-child(5){width:26px} #scorers th:nth-child(7){width:66px}
+  #scorers td.l{overflow:hidden;padding-right:5px} #scorers .owner{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
+  .tb th,.tb td{padding:4px 3px} .tb td.l{padding-left:4px}
+  .tb th:nth-child(1){width:22px} .tb th:nth-child(3){width:32px} .tb th:nth-child(n+4):nth-child(-n+7){width:24px} .tb th:nth-child(7){width:28px}
+  .tb .tn{gap:6px;min-width:0;overflow:hidden}
+  .tb .tnm{min-width:0;overflow:hidden;text-overflow:ellipsis}
+  .tb .tn .owner{flex:0 1 auto;min-width:0;max-width:70px;overflow:hidden;text-overflow:ellipsis;font-size:.52rem;padding:3px 5px}
+  .block table.sc{min-width:0} .block .sc th,.block .sc td{padding:6px 4px} .block .sc thead th{letter-spacing:.03em} .block .sc td.l{font-size:.85rem}
+}
+
 /* Rules */
 .rules{padding:18px 20px;display:grid;gap:16px}
 .rules ul{margin:0;padding-left:1.2em;display:grid;gap:6px;max-width:72ch}
@@ -319,7 +357,7 @@ footer .wrap{display:grid;gap:6px;border-top:1px solid var(--line);padding-top:1
   <section class="block" id="classement">
     <div class="sec-head"><div><span class="eyebrow">Points pool</span><h2>Classement</h2></div><p>Clique sur un nom pour voir son alignement.</p></div>
     <div class="scroll"><table class="std" id="std"></table></div>
-    <p class="help">PJ : matchs joués par les choix qui comptent · Dép. : changement de rang depuis hier · En cas d'égalité, le moins de matchs joués passe devant.</p>
+    <p class="help cols">PJ : matchs joués par les choix qui comptent · Dép. : changement de rang depuis hier · En cas d'égalité, le moins de matchs joués passe devant.</p>
   </section>
 
   <section class="block" id="alignements">
@@ -362,7 +400,7 @@ footer .wrap{display:grid;gap:6px;border-top:1px solid var(--line);padding-top:1
     <div class="sec-head"><div><span class="eyebrow">Les mêmes que sur PoolExpert</span><h2>Règlements</h2></div></div>
     <div class="card rules">
       <div style="overflow-x:auto"><table class="sc">
-        <thead><tr><th class="l"></th><th>Avants</th><th>Défenseurs</th><th>Gardiens</th><th>Équipes</th></tr></thead>
+        <thead><tr><th class="l"></th><th>Avants</th><th><span class="nf">Défenseurs</span><span class="ns">Déf.</span></th><th><span class="nf">Gardiens</span><span class="ns">Gard.</span></th><th>Équipes</th></tr></thead>
         <tbody>
           <tr><td class="l">But</td><td>1</td><td>1</td><td>1</td><td class="x">—</td></tr>
           <tr><td class="l">Passe</td><td>1</td><td>1</td><td>1</td><td class="x">—</td></tr>
@@ -416,6 +454,8 @@ function face(q, lg){
   const ini = q.name.split(" ").map(w => w[0]).slice(0, 2).join("");
   return `<span class="hs ${lg ? "lg" : ""}">${esc(ini)}<img src="https://a.espncdn.com/i/headshots/nhl/players/full/${q.id}.png" alt="" loading="lazy" onload="this.classList.add('ok')" onerror="this.remove()"></span>`;
 }
+const shortName = (n) => { const parts = String(n || "").split(" "); if (parts.length < 2 || /\./.test(parts[0])) return n; return parts[0][0] + ". " + parts.slice(1).join(" "); };
+const nameHTML = (full, short) => `<span class="nf">${esc(full)}</span><span class="ns">${esc(short)}</span>`;
 const teamOf = (q) => q.type === "T" ? q.team : (DATA?.team?.[q.id] || q.team);
 const posLbl = (q) => q.type === "T" ? "Équipe" : q.type === "G" ? "Gardien" : q.type === "D" ? "Défenseur" : "Avant";
 
@@ -705,7 +745,7 @@ function renderLineup(){
   const rows = r.picks.slice().sort((a, b) => b.pts - a.pts || b.g - a.g || a.r - b.r);
   $("#lu").innerHTML = `<thead><tr><th>Ronde</th><th class="l">Choix</th><th>Pts</th><th>B</th><th>P</th><th>PJ</th><th>V</th><th>Boni</th><th>Ce soir</th><th class="l">Compte</th></tr></thead><tbody>` +
     rows.map(x => { const q = x.q; const isT = q.type === "T";
-      return `<tr class="${x.counted ? "" : "out"}"><td>${q.r}</td><td class="l"><span class="pl">${face(q)}<b>${esc(isT ? "Équipe " + q.name : q.name)}</b>${badge(statusOf(q))}<small>${esc(posLbl(q))} · ${esc(isT ? teamOf(q) : (POOL.teams[teamOf(q)]?.name || teamOf(q)))}${statusOf(q)?.info ? " · " + esc(statusOf(q).info) : ""}</small></span></td>
+      return `<tr class="${x.counted ? "" : "out"}"><td>${q.r}</td><td class="l"><span class="pl">${face(q)}<b>${isT ? nameHTML("Équipe " + q.name, q.name) : nameHTML(q.name, shortName(q.name))}</b>${badge(statusOf(q))}<small>${esc(posLbl(q))} · ${esc(isT ? teamOf(q) : (POOL.teams[teamOf(q)]?.name || teamOf(q)))}${statusOf(q)?.info ? " · " + esc(statusOf(q).info) : ""}</small></span></td>
       <td class="pts">${x.pts}</td><td>${isT ? "—" : x.g}</td><td>${isT ? "—" : x.a}</td><td>${x.gp}</td><td>${q.type === "G" ? x.w : isT ? x.tw : "—"}</td><td>${q.type === "G" ? (x.so ? x.so + " BL" : "—") : isT ? (x.otl ? x.otl + " DP" : "—") : (x.ht ? x.ht + " TC" : "—")}</td><td>${q.today > 0 ? "+" + q.today : "—"}</td><td class="l"><span class="cnt ${x.counted ? "" : "no"}">${x.counted ? "Compte" : "Hors top 10"}</span></td></tr>`; }).join("") + "</tbody>";
 }
 
@@ -790,7 +830,7 @@ function ownerOfTeam(ab){ const q = PICKS.find(x => x.type === "T" && x.team ===
 function ownerOfPlayer(id){ const q = PICKS.find(x => x.type !== "T" && x.id === id); return q ? q.owner.name : ""; }
 function teamTable(title, teams, cutAt){
   return `<div class="card dv"><h3>${esc(title)}</h3><div class="tw"><table class="tb"><thead><tr><th></th><th class="l">Équipe</th><th>PTS</th><th>PJ</th><th>V</th><th>D</th><th>DP</th><th>Diff.</th><th>Séq.</th></tr></thead><tbody>` +
-    teams.map((t, i) => { const o = ownerOfTeam(t.t); return `<tr class="${cutAt && i === cutAt - 1 ? "cut" : ""}"><td class="rk">${i + 1}</td><td class="l"><span class="tn">${logo(t.t, true)}${esc(POOL.teams[t.t]?.name || t.name)}${o ? ` <span class="owner">${esc(o)}</span>` : ""}</span></td><td class="pt">${t.pts}</td><td>${t.gp}</td><td>${t.w}</td><td>${t.l}</td><td>${t.otl}</td><td>${esc(t.diff)}</td><td>${esc(t.strk)}</td></tr>`; }).join("") + "</tbody></table></div></div>";
+    teams.map((t, i) => { const o = ownerOfTeam(t.t); return `<tr class="${cutAt && i === cutAt - 1 ? "cut" : ""}"><td class="rk">${i + 1}</td><td class="l"><span class="tn">${logo(t.t, true)}<span class="tnm">${esc(POOL.teams[t.t]?.name || t.name)}</span>${o ? ` <span class="owner">${esc(o)}</span>` : ""}</span></td><td class="pt">${t.pts}</td><td>${t.gp}</td><td>${t.w}</td><td>${t.l}</td><td>${t.otl}</td><td>${esc(t.diff)}</td><td>${esc(t.strk)}</td></tr>`; }).join("") + "</tbody></table></div></div>";
 }
 function renderLNH(){
   document.querySelectorAll("#lnhView button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === LNH_VIEW)));
@@ -800,7 +840,7 @@ function renderLNH(){
   else if (LNH_VIEW === "conf") { g.className = "lnh-grid"; g.innerHTML = STAND.map(c => teamTable(PDEF[c.name] || c.name, c.divs.flatMap(d => d.teams).sort(sortTeams), 8)).join(""); }
   else { g.className = "lnh-grid one"; g.innerHTML = teamTable("Ligue nationale de hockey", STAND.flatMap(c => c.divs.flatMap(d => d.teams)).sort(sortTeams), 0); }
   $("#scorers").innerHTML = SCORERS.length ? `<thead><tr><th>#</th><th class="l">Joueur</th><th>PTS</th><th>B</th><th>P</th><th>PJ</th><th class="l">Pool</th></tr></thead><tbody>` +
-    SCORERS.map((x, i) => { const o = ownerOfPlayer(x.id); const rank = i + 1; return `<tr><td class="pos">${rank}</td><td class="nm2"><span class="pl">${face({ type: "F", id: x.id, name: x.name || "" })}<b>${esc(x.name)}</b><small>${logo(x.team, true)}${esc(x.team)}${x.pos ? " · " + esc(x.pos) : ""}</small></span></td><td class="pts">${x.p}</td><td>${x.g}</td><td>${x.a}</td><td>${x.gp}</td><td class="l">${o ? `<span class="owner">${esc(o)}</span>` : `<span class="free">Libre</span>`}</td></tr>`; }).join("") + "</tbody>"
+    SCORERS.map((x, i) => { const o = ownerOfPlayer(x.id); const rank = i + 1; return `<tr><td class="pos">${rank}</td><td class="nm2"><span class="pl">${face({ type: "F", id: x.id, name: x.name || "" })}<b>${nameHTML(x.name, shortName(x.name))}</b><small>${logo(x.team, true)}${esc(x.team)}${x.pos ? " · " + esc(x.pos) : ""}</small></span></td><td class="pts">${x.p}</td><td>${x.g}</td><td>${x.a}</td><td>${x.gp}</td><td class="l">${o ? `<span class="owner">${esc(o)}</span>` : `<span class="free">Libre</span>`}</td></tr>`; }).join("") + "</tbody>"
     : `<tbody><tr><td class="l" style="padding:18px;color:var(--muted)">Statistiques indisponibles pour l'instant.</td></tr></tbody>`;
 }
 
