@@ -241,6 +241,8 @@ table.lu{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .nw-body{padding:12px 14px 14px;display:grid;gap:6px;align-content:start}
 .nw-body h3{font:800 1.18rem/1.1 var(--display)}
 .nw-body p{margin:0;font-size:.86rem;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.nw-go{font:700 .8rem var(--body);color:var(--ice);margin-top:4px}
+.nw:hover .nw-go{text-decoration:underline}
 .nw-body time{font-size:.74rem;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
 
 /* NHL standings & scorers */
@@ -742,7 +744,7 @@ async function loadNews(){
   } catch (e) {}
 }
 function renderNews(){
-  $("#news").innerHTML = NEWS.length ? NEWS.map(n => `<a class="card nw" href="${esc(n.u)}" target="_blank" rel="noopener"><div class="nw-img">${n.img ? `<img src="${esc(n.img)}" alt="" loading="lazy" onerror="this.remove()">` : ""}<span class="nw-kind">RDS</span></div><div class="nw-body"><time>${esc(ago(n.t))}</time><h3>${esc(n.h)}</h3>${n.d ? `<p>${esc(n.d)}</p>` : ""}</div></a>`).join("") : `<div class="empty">Les nouvelles de RDS s'afficheront ici au prochain passage du robot.</div>`;
+  $("#news").innerHTML = NEWS.length ? NEWS.map(n => `<a class="card nw" href="${esc(n.u)}" rel="noopener"><div class="nw-img">${n.img ? `<img src="${esc(n.img)}" alt="" loading="lazy" onerror="this.remove()">` : ""}<span class="nw-kind">RDS</span></div><div class="nw-body"><time>${esc(ago(n.t))}</time><h3>${esc(n.h)}</h3>${n.d ? `<p>${esc(n.d)}</p>` : ""}<span class="nw-go">Lire l'article sur RDS ›</span></div></a>`).join("") : `<div class="empty">Les nouvelles de RDS s'afficheront ici au prochain passage du robot.</div>`;
 }
 
 let STAND = null, SCORERS = [], LNH_VIEW = "div";
