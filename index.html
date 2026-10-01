@@ -670,7 +670,7 @@ function renderDay(){
   const started = games.some(g => g.st !== "pre");
   const dayStats = DATA?.days?.[d] || { p: {}, t: {} };
   const status = (g) => g.st === "in" ? `${g.a.t} ${g.a.s}-${g.h.s} ${g.h.t} · ${frDetail(g.det)}` : g.st === "post" ? `${g.a.t} ${g.a.s}-${g.h.s} ${g.h.t} · ${frDetail(g.det) || "Final"}` : fmtTime.format(g.date);
-  $("#nightList").innerHTML = !games.length ? "" : R.now.map(r => {
+  $("#nightList").innerHTML = !games.length ? "" : R.now.slice().sort((x, y) => (gain[y.p.id] - gain[x.p.id]) || (x.rank - y.rank)).map(r => {
     const inGame = r.picks.filter(x => gameOf[teamOf(x.q)]);
     const playing = inGame.slice().sort((x, y) => ((statusOf(x.q)?.out ? 1 : 0) - (statusOf(y.q)?.out ? 1 : 0)) || (y.counted - x.counted) || (gameOf[teamOf(x.q)].date - gameOf[teamOf(y.q)].date) || x.q.r - y.q.r);
     const g = gain[r.p.id];
