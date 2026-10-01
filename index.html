@@ -30,6 +30,10 @@ html{scroll-behavior:smooth;scroll-padding-top:64px}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--body);
   background-image:radial-gradient(1100px 520px at 50% -160px,rgba(124,199,255,.18),transparent 70%),radial-gradient(600px 380px at 0 0,rgba(255,75,75,.06),transparent 70%);background-repeat:no-repeat}
+/* Arrière-plan : rondelle sur la glace, fixe derrière le contenu, assombrie pour la lisibilité */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(6,10,18,.62) 0%,rgba(6,10,18,.7) 40%,rgba(6,10,18,.82) 75%,rgba(6,10,18,.9) 100%),url("fond-glace.jpg") center 60%/cover no-repeat}
+@media (max-width:640px){body::before{background:linear-gradient(180deg,rgba(6,10,18,.66) 0%,rgba(6,10,18,.76) 45%,rgba(6,10,18,.9) 100%),url("fond-glace.jpg") center 60%/cover no-repeat}}
 a{color:inherit}
 button,input,select{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--ice);outline-offset:2px}
@@ -46,10 +50,6 @@ section.block{display:grid;gap:18px;padding-block:44px 8px;min-width:0}
 
 /* Hero */
 .hero{padding-block:28px 26px;position:relative;overflow:hidden}
-.hero::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.55;
-  background:linear-gradient(90deg,transparent calc(50% - 1px),rgba(239,91,91,.22) calc(50% - 1px),rgba(239,91,91,.22) calc(50% + 1px),transparent calc(50% + 1px)),
-             linear-gradient(90deg,transparent calc(25% - 1px),rgba(124,199,255,.16) calc(25% - 1px),rgba(124,199,255,.16) calc(25% + 2px),transparent calc(25% + 2px)),
-             linear-gradient(90deg,transparent calc(75% - 2px),rgba(124,199,255,.16) calc(75% - 2px),rgba(124,199,255,.16) calc(75% + 1px),transparent calc(75% + 1px))}
 .hero-in{position:relative;display:grid;gap:22px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:12px}
