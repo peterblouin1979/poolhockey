@@ -157,6 +157,20 @@ table.std{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .nt.zero b{color:var(--faint)}
 .games{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
 .game{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:8px;align-content:start}
+.game.click{cursor:pointer}
+.game.click:hover{border-color:var(--line-2);background:var(--panel-2)}
+.game.open{grid-column:1/-1}
+.g-more{font-size:.74rem;color:var(--ice);text-align:right}
+.g-goals{display:grid;gap:2px;border-top:1px dashed var(--line-2);padding-top:8px;cursor:default}
+.gl{display:grid;grid-template-columns:76px auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)}
+.gl:last-child{border-bottom:0}
+.gl-t{font:700 .78rem var(--body);color:var(--muted);font-variant-numeric:tabular-nums}
+.gl b{font-weight:700}
+.gl small{display:block;color:var(--muted);font-size:.82rem}
+.gl .owner{margin-left:6px}
+.gl-s{font:700 .62rem/1 var(--body);text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:999px;background:var(--ice-soft);color:var(--ice);white-space:nowrap}
+.gl-per{font:800 .72rem var(--body);text-transform:uppercase;letter-spacing:.1em;color:var(--faint);padding:8px 0 2px}
+@media (max-width:520px){.gl{grid-template-columns:58px auto minmax(0,1fr)}.gl-s{grid-column:3;justify-self:start}}
 .game.in{border-color:rgba(255,75,75,.5)}
 .g-meta{display:flex;justify-content:space-between;gap:8px;font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .g-meta .lv{color:var(--live);font-weight:700;display:inline-flex;align-items:center;gap:6px}
@@ -523,7 +537,10 @@ async function getSummary(g){
   const r = await fetch(`${API}/summary?event=${g.id}`, { cache: "no-store" });
   if (!r.ok) throw new Error("summary " + r.status);
   const j = await r.json();
-  const data = { plays: (j.plays || []).filter(p => p.scoringPlay).map(p => ({ per: p.period?.number || 0, parts: (p.participants || []).map(x => [x.athlete?.id, x.type]) })),
+  const teamAb = Object.fromEntries((j.boxscore?.players || []).map(tb => [tb.team?.id, tb.team?.abbreviation]));
+  const names = {};
+  (j.boxscore?.players || []).forEach(tb => (tb.statistics || []).forEach(gr => (gr.athletes || []).forEach(a => { if (a.athlete?.id) names[a.athlete.id] = a.athlete.displayName || a.athlete.shortName; })));
+  const data = { names, plays: (j.plays || []).filter(p => p.scoringPlay).map(p => ({ per: p.period?.number || 0, clock: p.clock?.displayValue || "", ab: teamAb[p.team?.id] || "", str: p.strength?.text || "", en: /empty net/i.test(p.strength?.text || "") || !!p.emptyNet, text: p.text || "", parts: (p.participants || []).map(x => [x.athlete?.id, x.type]) })),
     box: (j.boxscore?.players || []).map(tb => ({ ab: tb.team?.abbreviation, groups: (tb.statistics || []).map(gr => ({ name: gr.name, keys: gr.keys || [], ath: (gr.athletes || []).map(a => [a.athlete?.id, a.stats || []]) })) })) };
   SUM[g.id] = { at: Date.now(), data, final: g.st === "post" };
   return data;
@@ -583,6 +600,43 @@ async function liveDays(){
   if (any) LIVE_AT = new Date();
 }
 
+const ORD = (n) => n === 1 ? "1re" : n + "e";
+function frDetail(d){
+  if (!d) return "";
+  return d.replace(/^Final\/OT$/i, "Final (prol.)").replace(/^Final\/SO$/i, "Final (t.b.)").replace(/^End of (\d)(st|nd|rd|th)$/i, (m, n) => "Fin de la " + ORD(+n)).replace(/^(\d)(st|nd|rd|th) Intermission$/i, (m, n) => "Entracte après la " + ORD(+n))
+    .replace(/(\d)(st|nd|rd|th)\b/gi, (m, n) => ORD(+n)).replace(/\bOT\b/g, "prol.").replace(/\bSO\b/g, "t.b.").replace(/ - /, " · ").replace(/Intermission/i, "Entracte").replace(/Delayed/i, "Retardé");
+}
+const PERL = (n) => n <= 3 ? ORD(n) + " période" : n === 4 ? "Prolongation" : "Tirs de barrage";
+const OPEN_G = new Set();
+function goalsHTML(g){
+  if (g.st === "pre") return `<p class="help">Le match commence à ${esc(fmtTime.format(g.date))}.</p>`;
+  const c = SUM[g.id];
+  if (!c) return `<p class="help">Chargement des buts…</p>`;
+  const plays = c.data.plays || [], names = c.data.names || {};
+  if (!plays.length) return `<p class="help">Aucun but pour l'instant.</p>`;
+  let html = "", per = 0;
+  for (const p of plays) {
+    if (p.per !== per) { per = p.per; html += `<div class="gl-per">${esc(PERL(per))}</div>`; }
+    const m = p.text.match(/^(.*?) Goal \((\d+)\)/i);
+    const am = p.text.match(/assists?:\s*(.*)$/i);
+    const aTxt = am ? am[1].split(/,\s*/).map(x => x.match(/^(.*?)\s*\((\d+)\)$/)).filter(Boolean) : [];
+    const scorer = p.parts.find(x => x[1] === "scorer"), assists = p.parts.filter(x => x[1] === "assister");
+    const own = (id) => { const o = ownerOfPlayer(id); return o ? `<span class="owner">${esc(o)}</span>` : ""; };
+    const sName = scorer ? (names[scorer[0]] || (m ? m[1] : "")) : (m ? m[1] : "But");
+    const sCount = m ? ` (${m[2]})` : "";
+    const aList = assists.map((x, i) => `${esc(names[x[0]] || aTxt[i]?.[1] || "")}${aTxt[i] ? " (" + aTxt[i][2] + ")" : ""}${own(x[0])}`).join(", ");
+    const tag = p.per >= 5 ? "" : p.en ? "Filet désert" : /power/i.test(p.str) ? "Avantage num." : /short/i.test(p.str) ? "Désavantage num." : "";
+    html += `<div class="gl"><span class="gl-t">${esc(p.per >= 5 ? "T.B." : p.clock)}</span>${logo(p.ab, true)}<div><b>${esc(sName)}${esc(sCount)}</b>${scorer ? own(scorer[0]) : ""}<small>${p.per >= 5 ? "Tir de barrage réussi" : assists.length ? "Passes : " + aList : "Sans aide"}</small></div>${tag ? `<span class="gl-s">${esc(tag)}</span>` : "<span></span>"}</div>`;
+  }
+  return html;
+}
+async function toggleGame(id){
+  if (OPEN_G.has(id)) { OPEN_G.delete(id); renderDay(); return; }
+  OPEN_G.add(id); renderDay();
+  const g = (SB[VIEW_DAY]?.games || []).find(x => x.id === id);
+  if (g && g.st !== "pre" && !SUM[g.id]) { try { await getSummary(g); } catch (e) {} renderDay(); }
+}
+
 const OPEN = new Set();
 function statLine(q, s){
   if (!s) return "";
@@ -602,7 +656,7 @@ function renderDay(){
   const gain = Object.fromEntries(a.map(r => [r.p.id, r.pts - b[r.p.id]]));
   const started = games.some(g => g.st !== "pre");
   const dayStats = DATA?.days?.[d] || { p: {}, t: {} };
-  const status = (g) => g.st === "in" ? `${g.a.t} ${g.a.s}-${g.h.s} ${g.h.t} · ${g.det}` : g.st === "post" ? `${g.a.t} ${g.a.s}-${g.h.s} ${g.h.t} · ${g.det || "Final"}` : fmtTime.format(g.date);
+  const status = (g) => g.st === "in" ? `${g.a.t} ${g.a.s}-${g.h.s} ${g.h.t} · ${frDetail(g.det)}` : g.st === "post" ? `${g.a.t} ${g.a.s}-${g.h.s} ${g.h.t} · ${frDetail(g.det) || "Final"}` : fmtTime.format(g.date);
   $("#nightList").innerHTML = !games.length ? "" : R.now.map(r => {
     const inGame = r.picks.filter(x => gameOf[teamOf(x.q)]);
     const playing = inGame.slice().sort((x, y) => ((statusOf(x.q)?.out ? 1 : 0) - (statusOf(y.q)?.out ? 1 : 0)) || (y.counted - x.counted) || (gameOf[teamOf(x.q)].date - gameOf[teamOf(y.q)].date) || x.q.r - y.q.r);
@@ -620,9 +674,10 @@ function renderDay(){
   }).join("");
   $("#gamesLbl").textContent = games.length ? (d === today ? "Les matchs de ce soir" : "Les matchs") : "";
   $("#games").innerHTML = games.length ? games.map(g => {
-    const meta = g.st === "in" ? `<span class="lv">${esc(g.det || "En cours")}</span>` : g.st === "post" ? `<span>${esc(g.det || "Final")}</span>` : g.st === "off" ? "<span>Reporté</span>" : `<span>${esc(fmtTime.format(g.date))}</span>`;
+    const meta = g.st === "in" ? `<span class="lv">${esc(frDetail(g.det) || "En cours")}</span>` : g.st === "post" ? `<span>${esc(frDetail(g.det) || "Final")}</span>` : g.st === "off" ? "<span>Reporté</span>" : `<span>${esc(fmtTime.format(g.date))}</span>`;
     const row = (me) => `<div class="g-row ${g.st === "post" ? (me.w ? "win" : "lose") : ""}">${logo(me.t)}<span class="g-name">${esc(POOL.teams[me.t]?.name || me.t)}</span><span class="g-sc">${g.st === "pre" ? "" : me.s}</span></div>`;
-    return `<div class="game ${g.st === "in" ? "in" : ""}"><div class="g-meta">${meta}<span>${esc(g.tv || "")}</span></div>${row(g.a)}${row(g.h)}</div>`;
+    const open = OPEN_G.has(g.id), clickable = g.st !== "off";
+    return `<div class="game ${g.st === "in" ? "in" : ""} ${clickable ? "click" : ""} ${open ? "open" : ""}" ${clickable ? `data-g="${esc(g.id)}" role="button" tabindex="0" aria-expanded="${open}"` : ""}><div class="g-meta">${meta}<span>${esc(g.tv || "")}</span></div>${row(g.a)}${row(g.h)}${open ? `<div class="g-goals">${goalsHTML(g)}</div>` : clickable && g.st !== "pre" ? `<span class="g-more">Voir les buts ›</span>` : ""}</div>`;
   }).join("") : `<div class="empty">Aucun match de la LNH ${d === today ? "ce soir" : "cette journée-là"}.</div>`;
 }
 
@@ -767,6 +822,8 @@ async function boot(){
   $("#std").addEventListener("click", e => { const tr = e.target.closest("tr[data-p]"); if (tr) select(tr.dataset.p, true); });
   $("#std").addEventListener("keydown", e => { const tr = e.target.closest("tr[data-p]"); if (tr && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); select(tr.dataset.p, true); } });
   $("#nightList").addEventListener("toggle", e => { const el = e.target; if (el.matches?.("details.nl")) { if (el.open) OPEN.add(el.dataset.p); else OPEN.delete(el.dataset.p); } }, true);
+  $("#games").addEventListener("click", e => { if (e.target.closest(".g-goals")) return; const c = e.target.closest(".game[data-g]"); if (c) toggleGame(c.dataset.g); });
+  $("#games").addEventListener("keydown", e => { const c = e.target.closest(".game[data-g]"); if (c && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); toggleGame(c.dataset.g); } });
   $("#lnhView").addEventListener("click", e => { const b = e.target.closest("button[data-v]"); if (b) { LNH_VIEW = b.dataset.v; renderLNH(); } });
   $("#chips").addEventListener("click", e => { const b = e.target.closest("button[data-p]"); if (b) select(b.dataset.p); });
   $("#dPrev").onclick = async () => { VIEW_DAY = addDays(VIEW_DAY, -1); await loadDay(VIEW_DAY); renderDay(); };
