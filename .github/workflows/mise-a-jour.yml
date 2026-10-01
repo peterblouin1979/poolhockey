@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: 22
       - name: Calculer les points
-        run: node scripts/update.mjs
+        run: node scripts/update.mjs || echo "Points non disponibles pour l'instant"
       - name: Nouvelles RDS
         run: node scripts/news.mjs || echo "Nouvelles non disponibles"
       - name: Enregistrer les changements

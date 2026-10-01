@@ -444,7 +444,8 @@ function ago(d){ const m = Math.round((Date.now() - d) / 60000); if (m < 1) retu
 const signed = (n) => n > 0 ? "+" + n : String(n);
 
 let POOL = null, DATA = null, NEWS = [], SEL = null, VIEW_DAY = null, SB = {};
-const TODAY = () => etDate(new Date());
+// Une soirée de hockey finit après minuit : jusqu'à 5 h (heure de l'Est), « ce soir » reste la soirée de la veille.
+const TODAY = () => etDate(new Date(Date.now() - 5 * 3600e3));
 
 /* ---------- Logos & photos ---------- */
 // ESPN écrit parfois Utah « UTA » (horaire, sommaires) et parfois « UTAH » (équipes, alignements) : on garde une seule forme.
@@ -460,7 +461,7 @@ function face(q, lg){
 }
 const shortName = (n) => { const parts = String(n || "").split(" "); if (parts.length < 2 || /\./.test(parts[0])) return n; return parts[0][0] + ". " + parts.slice(1).join(" "); };
 const nameHTML = (full, short) => `<span class="nf">${esc(full)}</span><span class="ns">${esc(short)}</span>`;
-const teamOf = (q) => q.type === "T" ? q.team : (DATA?.team?.[q.id] || q.team);
+const teamOf = (q) => q.type === "T" ? q.team : nab(DATA?.team?.[q.id] || q.team);
 const posLbl = (q) => q.type === "T" ? "Équipe" : q.type === "G" ? "Gardien" : q.type === "D" ? "Défenseur" : "Avant";
 
 /* ---------- Scoring ---------- */
@@ -577,7 +578,7 @@ async function loadDay(d, force){
     });
     SB[d] = { at: Date.now(), games };
   } catch (e) {
-    const g = (DATA?.games?.[d] || []).map(x => ({ id: x[0], a: { t: nab(x[1]), s: x[3] }, h: { t: nab(x[2]), s: x[4] }, st: x[5], det: x[6], date: new Date(x[8]) }));
+    const g = (DATA?.games?.[d] || []).map(x => ({ id: x[0], a: { t: nab(x[1]), s: x[3] }, h: { t: nab(x[2]), s: x[4] }, st: x[5], det: x[6], per: x[7] || 0, date: new Date(x[8]) }));
     g.forEach(x => { if (x.st === "post") { x.a.w = x.a.s > x.h.s; x.h.w = x.h.s > x.a.s; } });
     SB[d] = { at: Date.now(), games: g };
   }
@@ -649,6 +650,7 @@ async function liveDays(){
   let any = false;
   for (const d of [addDays(today, -1), today]) {
     if (DATA.closedThrough && d <= DATA.closedThrough) continue;
+    if (d < POOL.start || d > POOL.end) continue;
     const games = (SB[d]?.games || []).filter(g => g.st === "in" || g.st === "post");
     if (!games.length) continue;
     try {
@@ -749,7 +751,7 @@ function renderLineup(){
   const r = R.now.find(x => x.p.id === SEL) || R.now[0];
   $("#luHead").innerHTML = `<div><span class="eyebrow">${r.rank === 1 ? "1<sup>er</sup>" : r.rank + "<sup>e</sup>"} au classement</span><h3>${esc(r.p.name)}</h3></div>
     <div class="lu-sum"><div><b>${r.pts}</b><span>Points</span></div><div><b>${r.gp}</b><span>Matchs</span></div><div><b>${r.tonight > 0 ? "+" + r.tonight : 0}</b><span>Ce soir</span></div><div><b>${r.hier > 0 ? "+" + r.hier : 0}</b><span>Hier</span></div><div><b>${r.gap ? "−" + r.gap : "—"}</b><span>Écart</span></div></div>`;
-  const rows = r.picks.slice().sort((a, b) => b.pts - a.pts || b.g - a.g || a.r - b.r);
+  const rows = r.picks.slice().sort((a, b) => b.pts - a.pts || b.counted - a.counted || a.gp - b.gp || a.r - b.r);
   $("#lu").innerHTML = `<thead><tr><th>Ronde</th><th class="l">Choix</th><th>Pts</th><th>B</th><th>P</th><th>PJ</th><th>V</th><th>Boni</th><th>Ce soir</th><th>Hier</th><th class="l">Compte</th></tr></thead><tbody>` +
     rows.map(x => { const q = x.q; const isT = q.type === "T";
       return `<tr class="${x.counted ? "" : "out"}"><td>${q.r}</td><td class="l"><span class="pl">${face(q)}<b>${isT ? nameHTML("Équipe " + q.name, q.name) : nameHTML(q.name, shortName(q.name))}</b>${badge(statusOf(q))}<small>${esc(posLbl(q))} · ${esc(isT ? teamOf(q) : (POOL.teams[teamOf(q)]?.name || teamOf(q)))}${statusOf(q)?.info ? " · " + esc(statusOf(q).info) : ""}</small></span></td>
@@ -895,7 +897,7 @@ async function tick(){
   const soon = (SB[TODAY()]?.games || []).some(g => g.st === "pre" && g.date - Date.now() < 20 * 60e3);
   clearTimeout(tick.t);
   tick.t = setTimeout(async () => {
-    if (document.visibilityState === "visible") {
+    try { if (document.visibilityState === "visible") {
       await loadDay(TODAY(), true);
       if (VIEW_DAY !== TODAY()) await loadDay(VIEW_DAY);
       const yd = addDays(TODAY(), -1);
@@ -904,7 +906,7 @@ async function tick(){
       if (Date.now() - (tick.lnh || 0) > 10 * 60e3) { await loadLNH(); tick.lnh = Date.now(); }
       await liveDays();
       renderAll();
-    }
+    } } catch (e) { console.error(e); }
     tick();
   }, live || soon ? 60e3 : 5 * 60e3);
 }

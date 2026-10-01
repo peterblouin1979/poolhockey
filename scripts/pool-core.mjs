@@ -33,12 +33,20 @@ export async function update(pool, prev, getJSON, now = new Date()) {
   const last = today < pool.end ? today : pool.end;
   let closed = data.closedThrough;
   let stillClosing = true;
-  for (let d = closed ? addDays(closed, 1) : pool.start; d <= last; d = addDays(d, 1)) {
-    const sb = await getJSON(`${API}/scoreboard?dates=${d.replace(/-/g, "")}`);
+  // La LNH corrige parfois une passe ou un but le lendemain : on revérifie aussi les 2 dernières soirées déjà fermées.
+  let from = closed ? addDays(closed, 1) : pool.start;
+  const recheck = addDays(today, -2);
+  if (from > recheck) from = recheck < pool.start ? pool.start : recheck;
+  for (let d = from; d <= last; d = addDays(d, 1)) {
+    let sb;
+    try { sb = await getJSON(`${API}/scoreboard?dates=${d.replace(/-/g, "")}`); }
+    catch (err) { console.log(`Horaire du ${d} indisponible : ${err.message}`); break; } // on garde les données d'avant et on réessaie au prochain passage
     const evs = (sb.events || []).filter((e) => !e.season || e.season.type === 2);
+    // Réponse vide alors qu'on connaissait des matchs ce jour-là : ESPN a un raté, on ne touche à rien.
+    if (!evs.length && (data.games[d] || []).length) { stillClosing = false; continue; }
     const day = { p: {}, t: {} };
     const glist = [];
-    let dayFinal = true;
+    let dayFinal = true, failed = false;
     for (const e of evs) {
       const c = e.competitions[0];
       const H = c.competitors.find((x) => x.homeAway === "home");
@@ -60,7 +68,9 @@ export async function update(pool, prev, getJSON, now = new Date()) {
         if (st === "post") { if (me.winner) row[1]++; else if (period > 3) row[2]++; }
       }
 
-      const s = await getJSON(`${API}/summary?event=${e.id}`);
+      let s;
+      try { s = await getJSON(`${API}/summary?event=${e.id}`); }
+      catch (err) { console.log(`Feuille de match ${e.id} indisponible : ${err.message}`); failed = true; continue; }
       // Buts et passes des gardiens : tirés du détail des buts (hors tirs de barrage)
       const gPts = {};
       for (const pl of s.plays || []) {
@@ -73,8 +83,8 @@ export async function update(pool, prev, getJSON, now = new Date()) {
         }
       }
       for (const tb of s.boxscore?.players || []) {
-        const ab = tb.team?.abbreviation;
-        const comp = ab === A.team.abbreviation ? A : H;
+        const ab = nab(tb.team?.abbreviation);
+        const comp = ab === nab(A.team.abbreviation) ? A : H;
         data.team = data.team || {};
         const goalies = [];
         for (const grp of tb.statistics || []) {
@@ -111,25 +121,28 @@ export async function update(pool, prev, getJSON, now = new Date()) {
         }
       }
     }
-    if (Object.keys(day.p).length || Object.keys(day.t).length) data.days[d] = day; else delete data.days[d];
     data.games[d] = glist;
-    if (stillClosing && dayFinal && d < today) closed = d; else stillClosing = false;
+    if (failed) { stillClosing = false; continue; } // une feuille de match manquante : on garde les points d'avant pour ce jour
+    if (Object.keys(day.p).length || Object.keys(day.t).length) data.days[d] = day; else delete data.days[d];
+    if (stillClosing && dayFinal && d < today) { if (!closed || d > closed) closed = d; } else stillClosing = false;
   }
   data.closedThrough = closed;
 
   // Alignements LNH : repère les joueurs qui ne sont dans aucune équipe (sans contrat, mineures…)
-  // Environ 8 fois par jour, et au premier passage.
-  const h = now.getUTCHours(), m = now.getUTCMinutes();
-  if (!Array.isArray(data.noRoster) || (h % 3 === 0 && m < 15)) {
-    const seen = new Set();
-    data.team = data.team || {};
-    for (const [ab, t] of Object.entries(pool.teams)) {
-      const r = await getJSON(`${API}/teams/${t.id}/roster`);
-      for (const g of r.athletes || []) for (const a of g.items || []) {
-        if (ids.has(a.id)) { seen.add(a.id); data.team[a.id] = ab; }
+  // Toutes les 3 heures environ, et au premier passage.
+  if (!Array.isArray(data.noRoster) || !data.rosterAt || now - new Date(data.rosterAt) > 3 * 3600e3 - 10 * 60e3) {
+    try {
+      const seen = new Set(), team = {};
+      for (const [ab, t] of Object.entries(pool.teams)) {
+        const r = await getJSON(`${API}/teams/${t.id}/roster`);
+        for (const g of r.athletes || []) for (const a of g.items || []) {
+          if (ids.has(a.id)) { seen.add(a.id); team[a.id] = ab; }
+        }
       }
-    }
-    data.noRoster = [...ids].filter((id) => !seen.has(id)).sort();
+      data.team = { ...(data.team || {}), ...team };
+      data.noRoster = [...ids].filter((id) => !seen.has(id)).sort();
+      data.rosterAt = now.toISOString();
+    } catch (err) { console.log(`Alignements LNH indisponibles : ${err.message}`); }
   }
   // garder seulement 8 jours de matchs pour l'affichage
   const keep = addDays(today, -7);
