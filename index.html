@@ -322,7 +322,7 @@ footer .wrap{display:grid;gap:6px;border-top:1px solid var(--line);padding-top:1
 </main>
 
 <footer><div class="wrap">
-  <span>Résultats, feuilles de match et nouvelles : ESPN. Les points sont recalculés aux 15 minutes, et les pointages des matchs en cours chaque minute.</span>
+  <span>Résultats, feuilles de match et nouvelles : ESPN. Pendant les matchs, les points se calculent en direct chaque minute. Le robot les confirme aux 15 minutes.</span>
   <span id="foot"></span>
 </div></footer>
 
@@ -420,7 +420,7 @@ function renderStatus(){
   const live = (SB[TODAY()]?.games || []).some(g => g.st === "in");
   const upd = DATA?.updated ? new Date(DATA.updated) : null;
   $("#pill").className = "pill " + (live ? "live" : upd ? "" : "off");
-  $("#pillTxt").textContent = live ? "Matchs en cours · points " + (upd ? ago(upd) : "") : upd ? "Points à jour · " + ago(upd) : "En attente des premiers calculs";
+  $("#pillTxt").textContent = live ? (LIVE_AT ? "Points en direct · " + fmtTime.format(LIVE_AT) : "Matchs en cours") : upd ? "Points à jour · " + ago(upd) : "En attente des premiers calculs";
   $("#foot").textContent = upd ? "Dernier calcul des points : " + upd.toLocaleString("fr-CA", { dateStyle: "long", timeStyle: "short" }) + "." : "";
 }
 function renderHero(){
@@ -465,7 +465,7 @@ async function loadDay(d, force){
     const games = (j.events || []).filter(e => !e.season || e.season.type === 2).map(e => {
       const c = e.competitions[0], H = c.competitors.find(x => x.homeAway === "home"), A = c.competitors.find(x => x.homeAway === "away");
       const off = /POSTPONED|CANCELED|SUSPENDED/.test(e.status?.type?.name || "");
-      return { id: e.id, date: new Date(e.date), st: off ? "off" : e.status.type.state, det: e.status.type.shortDetail || "", a: { t: A.team.abbreviation, s: +A.score || 0, w: !!A.winner }, h: { t: H.team.abbreviation, s: +H.score || 0, w: !!H.winner }, tv: (c.broadcasts?.[0]?.names || []).join(", ") };
+      return { id: e.id, date: new Date(e.date), st: off ? "off" : e.status.type.state, det: e.status.type.shortDetail || "", per: e.status?.period || 0, a: { t: A.team.abbreviation, s: +A.score || 0, w: !!A.winner }, h: { t: H.team.abbreviation, s: +H.score || 0, w: !!H.winner }, tv: (c.broadcasts?.[0]?.names || []).join(", ") };
     });
     SB[d] = { at: Date.now(), games };
   } catch (e) {
@@ -474,6 +474,81 @@ async function loadDay(d, force){
     SB[d] = { at: Date.now(), games: g };
   }
 }
+/* ---------- Points en direct (calculés par la page pendant les matchs) ---------- */
+const SUM = {}; let LIVE_AT = null; let SETS = null;
+const toiSec = (t) => { if (!t) return 0; const [m, sec] = String(t).split(":").map(Number); return (m || 0) * 60 + (sec || 0); };
+function sets(){
+  if (SETS) return SETS;
+  const ids = new Set(), gids = new Set(), tms = new Set();
+  POOL.participants.forEach(p => p.picks.forEach(q => { if (q.type === "T") tms.add(q.team); else { ids.add(q.id); if (q.type === "G") gids.add(q.id); } }));
+  return SETS = { ids, gids, tms };
+}
+async function getSummary(g){
+  const c = SUM[g.id];
+  if (c && (c.final || Date.now() - c.at < 45e3)) return c.data;
+  const r = await fetch(`${API}/summary?event=${g.id}`, { cache: "no-store" });
+  if (!r.ok) throw new Error("summary " + r.status);
+  const j = await r.json();
+  const data = { plays: (j.plays || []).filter(p => p.scoringPlay).map(p => ({ per: p.period?.number || 0, parts: (p.participants || []).map(x => [x.athlete?.id, x.type]) })),
+    box: (j.boxscore?.players || []).map(tb => ({ ab: tb.team?.abbreviation, groups: (tb.statistics || []).map(gr => ({ name: gr.name, keys: gr.keys || [], ath: (gr.athletes || []).map(a => [a.athlete?.id, a.stats || []]) })) })) };
+  SUM[g.id] = { at: Date.now(), data, final: g.st === "post" };
+  return data;
+}
+// même logique que le robot (scripts/pool-core.mjs)
+function applyGame(g, s, day){
+  const { ids, gids, tms } = sets();
+  for (const me of [g.a, g.h]) {
+    if (!tms.has(me.t)) continue;
+    const row = day.t[me.t] || (day.t[me.t] = [0, 0, 0]);
+    row[0]++;
+    if (g.st === "post") { if (me.w) row[1]++; else if (g.per > 3) row[2]++; }
+  }
+  const gPts = {};
+  for (const pl of s.plays) { if (pl.per > 4) continue; for (const [id, type] of pl.parts) { if (!gids.has(id)) continue; const r = gPts[id] || (gPts[id] = [0, 0]); if (type === "scorer") r[0]++; else if (type === "assister") r[1]++; } }
+  for (const tb of s.box) {
+    const comp = tb.ab === g.a.t ? g.a : g.h;
+    const goalies = [];
+    for (const grp of tb.groups) {
+      const k = grp.keys, iT = k.indexOf("timeOnIce");
+      const num = (v, key) => { const i = k.indexOf(key); return i < 0 ? 0 : parseFloat(v[i]) || 0; };
+      for (const [id, v] of grp.ath) {
+        const toi = toiSec(v[iT]);
+        if (grp.name === "goalies") {
+          if (toi > 0) goalies.push({ id, ga: num(v, "goalsAgainst"), toi });
+          if (!ids.has(id) || toi <= 0) continue;
+          const row = day.p[id] || (day.p[id] = [0, 0, 0, 0, 0, 0]); row[0]++;
+          const gp = gPts[id]; if (gp) { row[1] += gp[0]; row[2] += gp[1]; }
+        } else {
+          if (!ids.has(id)) continue;
+          const row = day.p[id] || (day.p[id] = [0, 0, 0, 0, 0, 0]);
+          const gl = num(v, "goals"); row[0]++; row[1] += gl; row[2] += num(v, "assists"); if (gl >= 3) row[3]++;
+        }
+      }
+    }
+    if (g.st === "post" && comp.w && goalies.length) {
+      const dec = goalies.slice().sort((x, y) => y.toi - x.toi)[0];
+      if (ids.has(dec.id)) { const row = day.p[dec.id] || (day.p[dec.id] = [1, 0, 0, 0, 0, 0]); row[4]++; if (goalies.length === 1 && dec.ga === 0) row[5]++; }
+    }
+  }
+}
+async function liveDays(){
+  if (!POOL || !DATA) return;
+  DATA.days = DATA.days || {};
+  const today = TODAY();
+  let any = false;
+  for (const d of [addDays(today, -1), today]) {
+    if (DATA.closedThrough && d <= DATA.closedThrough) continue;
+    const games = (SB[d]?.games || []).filter(g => g.st === "in" || g.st === "post");
+    if (!games.length) continue;
+    try {
+      const day = { p: {}, t: {} };
+      for (const g of games) applyGame(g, await getSummary(g), day);
+      DATA.days[d] = day; any = true;
+    } catch (e) { /* on garde les points du robot */ }
+  }
+  if (any) LIVE_AT = new Date();
+}
+
 const OPEN = new Set();
 function statLine(q, s){
   if (!s) return "";
@@ -606,7 +681,8 @@ function select(id, scroll){
 async function boot(){
   await loadData();
   VIEW_DAY = TODAY();
-  await Promise.all([loadDay(VIEW_DAY), loadNews(), loadInjuries()]);
+  await Promise.all([loadDay(VIEW_DAY), loadNews(), loadInjuries(), (!DATA.closedThrough || addDays(VIEW_DAY, -1) > DATA.closedThrough) ? loadDay(addDays(VIEW_DAY, -1)) : null]);
+  await liveDays();
   // pas de match aujourd'hui : montrer le prochain jour de match
   if (!SB[VIEW_DAY]?.games.length) {
     for (let i = 1; i <= 5; i++) { const d = addDays(VIEW_DAY, i); await loadDay(d); if (SB[d]?.games.length) { VIEW_DAY = d; break; } }
@@ -621,19 +697,23 @@ async function boot(){
   tick();
 }
 async function tick(){
-  const live = (SB[TODAY()]?.games || []).some(g => g.st === "in");
+  const live = [TODAY(), addDays(TODAY(), -1)].some(d => (SB[d]?.games || []).some(g => g.st === "in"));
   const soon = (SB[TODAY()]?.games || []).some(g => g.st === "pre" && g.date - Date.now() < 20 * 60e3);
   clearTimeout(tick.t);
   tick.t = setTimeout(async () => {
     if (document.visibilityState === "visible") {
       await loadDay(TODAY(), true);
       if (VIEW_DAY !== TODAY()) await loadDay(VIEW_DAY);
+      const yd = addDays(TODAY(), -1);
+      if (!DATA.closedThrough || yd > DATA.closedThrough) await loadDay(yd, (SB[yd]?.games || []).some(g => g.st === "in"));
       if (Date.now() - (tick.data || 0) > 3 * 60e3) { await Promise.all([loadData(), loadNews(), loadInjuries()]); tick.data = Date.now(); }
+      await liveDays();
       renderAll();
     }
     tick();
   }, live || soon ? 60e3 : 5 * 60e3);
 }
+if (/[?&]debug/.test(location.search)) window.__pool = { applyGame, getSummary, loadDay, get SB(){ return SB; }, get DATA(){ return DATA; }, get R(){ return R; } };
 boot().catch(err => { $("#pillTxt").textContent = "Impossible de charger le pool pour l'instant"; console.error(err); });
 })();
 </script>
