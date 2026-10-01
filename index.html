@@ -702,7 +702,7 @@ async function loadLNH(){
     if (r.ok) {
       const j = await r.json();
       const st = (e, n) => e.stats.find(x => x.name === n);
-      const team = (e) => ({ t: e.team.abbreviation, name: e.team.shortDisplayName || e.team.name, gp: +st(e, "gamesPlayed")?.value || 0, w: +st(e, "wins")?.value || 0, l: +st(e, "losses")?.value || 0, otl: +st(e, "otLosses")?.value || 0, pts: +st(e, "points")?.value || 0, diff: st(e, "differential")?.displayValue || st(e, "pointDifferential")?.displayValue || "", strk: st(e, "streak")?.displayValue || "", rw: +st(e, "regWins")?.value || 0 });
+      const team = (e) => ({ t: e.team.abbreviation, name: e.team.shortDisplayName || e.team.name, gp: +st(e, "gamesPlayed")?.value || 0, w: +st(e, "wins")?.value || 0, l: +st(e, "losses")?.value || 0, otl: +st(e, "otLosses")?.value || 0, pts: +st(e, "points")?.value || 0, diff: st(e, "pointDifferential")?.displayValue || st(e, "differential")?.displayValue || "", strk: st(e, "streak")?.displayValue || "", rw: +st(e, "regWins")?.value || 0 });
       STAND = (j.children || []).map(c => ({ name: c.name, divs: (c.children || []).map(d => ({ name: d.name, teams: (d.standings?.entries || []).map(team) })) }));
     }
   } catch (e) {}
