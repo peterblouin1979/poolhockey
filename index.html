@@ -117,22 +117,22 @@ table.std{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btn.icon{padding:8px 11px}
 .day-title{font:900 1.5rem/1 var(--display);text-transform:uppercase;min-width:10ch;text-align:center}
-.nlist{display:grid;gap:8px}
+.nlist{display:grid;gap:4px}
 .nl{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
 .nl[open]{border-color:var(--line-2)}
-.nl summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:36px minmax(0,1fr) auto auto 18px;gap:12px;align-items:center;padding:12px 14px}
+.nl summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:30px minmax(0,1fr) auto auto 14px;gap:10px;align-items:center;padding:6px 12px}
 .nl summary::-webkit-details-marker{display:none}
 .nl summary:hover{background:var(--panel-2)}
-.nl .rkn{font:900 1.15rem/1 var(--display);color:var(--muted);text-align:center}
-.nl .nm{font-weight:700;font-size:1.02rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nl .rkn{font:900 1rem/1 var(--display);color:var(--muted);text-align:center}
+.nl .nm{font-weight:700;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nl .ct{font-size:.86rem;color:var(--muted);white-space:nowrap}
-.nl .ct b{font:900 1.2rem/1 var(--display);color:var(--ink);margin-right:4px}
-.nl .gain{font:900 1.35rem/1 var(--display);min-width:3ch;text-align:right;color:var(--faint)}
+.nl .ct b{font:900 1.05rem/1 var(--display);color:var(--ink);margin-right:4px}
+.nl .gain{font:900 1.15rem/1 var(--display);min-width:3ch;text-align:right;color:var(--faint)}
 .nl .gain.on{color:var(--ice)}
 .nl .chev{color:var(--muted);transition:transform .2s}
 .nl[open] .chev{transform:rotate(90deg)}
-.nl-body{display:grid;gap:2px;padding:4px 14px 12px;border-top:1px dashed var(--line-2)}
-.pr{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.nl-body{display:grid;gap:0;padding:2px 12px 6px;border-top:1px dashed var(--line-2)}
+.pr{display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:4px 0;border-bottom:1px solid var(--line)}
 .pr:last-child{border-bottom:0}
 .pr .who{min-width:0}
 .pr .who b{display:block;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -142,6 +142,10 @@ table.std{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .pr .pp{font:900 1.2rem/1 var(--display);min-width:3ch;text-align:right;color:var(--faint)}
 .pr .pp.on{color:var(--ink)}
 .pr.out{opacity:.55}
+.pr .hs{width:26px;height:26px;font-size:.62rem}
+.pr .who b{font-size:.92rem}
+.pr .who small{font-size:.76rem}
+.pr .tm.sm{width:18px;height:18px}
 .stt{display:inline-flex;align-items:center;font:700 .62rem/1 var(--body);text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:999px;white-space:nowrap;vertical-align:1px}
 .stt.out{background:rgba(239,91,91,.18);color:#ff8a8a}
 .stt.dtd{background:rgba(255,197,61,.16);color:var(--gold)}
@@ -263,8 +267,15 @@ table.tb{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .tb tr.cut td{border-bottom:2px solid var(--line-2)}
 .owner{font:700 .62rem/1 var(--body);text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:999px;background:var(--ice-soft);color:var(--ice);white-space:nowrap}
 .lb td.nm2{text-align:left}
-.lb .pl{display:flex;align-items:center;gap:10px}
-.lb .pl small{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.78rem}
+.lb th,.lb td{padding:4px 8px}
+.lb .pos{font-size:1rem}
+.lb .pts{font-size:1.1rem}
+.lb .hs{width:24px;height:24px;font-size:.6rem}
+.lb .owner{font-size:.58rem}
+.lb .pl{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.lb .pl b{font-weight:600}
+.lb .pl small{display:inline-flex;align-items:center;gap:5px;color:var(--muted);font-size:.76rem}
+.lb .tm.sm{width:18px;height:18px}
 .lb .free{color:var(--faint);font-size:.8rem}
 
 /* Rules */
@@ -784,7 +795,7 @@ function renderLNH(){
   else if (LNH_VIEW === "conf") { g.className = "lnh-grid"; g.innerHTML = STAND.map(c => teamTable(PDEF[c.name] || c.name, c.divs.flatMap(d => d.teams).sort(sortTeams), 8)).join(""); }
   else { g.className = "lnh-grid one"; g.innerHTML = teamTable("Ligue nationale de hockey", STAND.flatMap(c => c.divs.flatMap(d => d.teams)).sort(sortTeams), 0); }
   $("#scorers").innerHTML = SCORERS.length ? `<thead><tr><th>#</th><th class="l">Joueur</th><th>PTS</th><th>B</th><th>P</th><th>PJ</th><th class="l">Pool</th></tr></thead><tbody>` +
-    SCORERS.map((x, i) => { const o = ownerOfPlayer(x.id); const rank = i > 0 && SCORERS[i - 1].p === x.p ? "" : i + 1; return `<tr><td class="pos">${rank}</td><td class="nm2"><span class="pl">${face({ type: "F", id: x.id, name: x.name || "" })}<span>${esc(x.name)}<small>${logo(x.team, true)} ${esc(POOL.teams[x.team]?.name || x.team)}${x.pos ? " · " + esc(x.pos) : ""}</small></span></span></td><td class="pts">${x.p}</td><td>${x.g}</td><td>${x.a}</td><td>${x.gp}</td><td class="l">${o ? `<span class="owner">${esc(o)}</span>` : `<span class="free">Libre</span>`}</td></tr>`; }).join("") + "</tbody>"
+    SCORERS.map((x, i) => { const o = ownerOfPlayer(x.id); const rank = i > 0 && SCORERS[i - 1].p === x.p ? "" : i + 1; return `<tr><td class="pos">${rank}</td><td class="nm2"><span class="pl">${face({ type: "F", id: x.id, name: x.name || "" })}<b>${esc(x.name)}</b><small>${logo(x.team, true)}${esc(x.team)}${x.pos ? " · " + esc(x.pos) : ""}</small></span></td><td class="pts">${x.p}</td><td>${x.g}</td><td>${x.a}</td><td>${x.gp}</td><td class="l">${o ? `<span class="owner">${esc(o)}</span>` : `<span class="free">Libre</span>`}</td></tr>`; }).join("") + "</tbody>"
     : `<tbody><tr><td class="l" style="padding:18px;color:var(--muted)">Statistiques indisponibles pour l'instant.</td></tr></tbody>`;
 }
 
