@@ -11,10 +11,11 @@ const clean = (s) => decode(String(s || "").replace(/<!\[CDATA\[([\s\S]*?)\]\]>/
 const tag = (x, t) => { const m = x.match(new RegExp(`<${t}[^>]*>([\\s\\S]*?)</${t}>`, "i")); return m ? m[1] : ""; };
 const attr = (x, t, a) => { const m = x.match(new RegExp(`<${t}[^>]*\\s${a}="([^"]+)"`, "i")); return m ? decode(m[1]) : ""; };
 
-// Le fil RDS indique parfois l'heure UTC suivie de « -0400 » : une date dans le futur est relue comme UTC.
+// Le fil RDS donne l'heure UTC suivie à tort de « -0400 » (vérifié avec la page de l'article).
+// On la relit comme UTC, sauf si ça donnerait une date dans le futur.
 function fixDate(raw){
-  let d = new Date(raw);
-  if (d - Date.now() > 5 * 60e3) d = new Date(raw.replace(/\s[+-]\d{4}$/, " +0000"));
+  const utc = new Date(raw.replace(/\s[+-]\d{4}$/, " +0000"));
+  const d = !isNaN(utc) && utc - Date.now() < 5 * 60e3 ? utc : new Date(raw);
   return isNaN(d) ? "" : d.toISOString();
 }
 
