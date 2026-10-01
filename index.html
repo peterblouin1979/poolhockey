@@ -229,6 +229,28 @@ table.lu{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .nw-body p{margin:0;font-size:.86rem;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .nw-body time{font-size:.74rem;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
 
+/* NHL standings & scorers */
+.lnh-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.lnh-grid.one{grid-template-columns:1fr}
+@media (max-width:900px){.lnh-grid{grid-template-columns:1fr}}
+.dv{padding:12px 4px 4px;min-width:0}
+.dv h3{font:900 1.3rem/1 var(--display);text-transform:uppercase;padding:0 12px 8px}
+.dv .tw{overflow-x:auto}
+table.tb{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+.tb th,.tb td{padding:7px 8px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+.tb thead th{font:600 .68rem var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.tb th.l,.tb td.l{text-align:left}
+.tb tbody tr:last-child td{border-bottom:0}
+.tb .tn{display:flex;align-items:center;gap:8px}
+.tb .rk{color:var(--muted);font:800 .95rem var(--display);width:24px;text-align:center}
+.tb .pt{font:900 1.15rem var(--display)}
+.tb tr.cut td{border-bottom:2px solid var(--line-2)}
+.owner{font:700 .62rem/1 var(--body);text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:999px;background:var(--ice-soft);color:var(--ice);white-space:nowrap}
+.lb td.nm2{text-align:left}
+.lb .pl{display:flex;align-items:center;gap:10px}
+.lb .pl small{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:.78rem}
+.lb .free{color:var(--faint);font-size:.8rem}
+
 /* Rules */
 .rules{padding:18px 20px;display:grid;gap:16px}
 .rules ul{margin:0;padding-left:1.2em;display:grid;gap:6px;max-width:72ch}
@@ -258,7 +280,7 @@ footer .wrap{display:grid;gap:6px;border-top:1px solid var(--line);padding-top:1
 </header>
 
 <nav class="nav" aria-label="Sections"><div class="wrap">
-  <a href="#classement">Classement</a><a href="#alignements">Alignements</a><a href="#soir">Ce soir</a><a href="#meneurs">Meneurs</a><a href="#nouvelles">Nouvelles LNH</a><a href="#reglements">Règlements</a>
+  <a href="#classement">Classement</a><a href="#alignements">Alignements</a><a href="#soir">Ce soir</a><a href="#meneurs">Meneurs</a><a href="#lnh">Classement LNH</a><a href="#pointeurs">Pointeurs LNH</a><a href="#nouvelles">Nouvelles RDS</a><a href="#reglements">Règlements</a>
 </div></nav>
 
 <main class="wrap">
@@ -292,8 +314,20 @@ footer .wrap{display:grid;gap:6px;border-top:1px solid var(--line);padding-top:1
     <div class="leaders" id="leaders"></div>
   </section>
 
+  <section class="block" id="lnh">
+    <div class="sec-head"><div><span class="eyebrow">Saison 2026-2027</span><h2>Classement LNH</h2></div>
+      <div class="chips" id="lnhView" role="group" aria-label="Affichage"><button type="button" data-v="div" aria-pressed="true">Divisions</button><button type="button" data-v="conf" aria-pressed="false">Associations</button><button type="button" data-v="all" aria-pressed="false">Ligue</button></div></div>
+    <div class="lnh-grid" id="lnhGrid"></div>
+    <p class="help">PJ : matchs joués · V : victoires · D : défaites · DP : défaites en prolongation ou en tirs de barrage · PTS : points au classement. Les équipes repêchées dans le pool sont identifiées par le nom du participant.</p>
+  </section>
+
+  <section class="block" id="pointeurs">
+    <div class="sec-head"><div><span class="eyebrow">Toute la LNH</span><h2>Meilleurs pointeurs</h2></div><p>Les joueurs repêchés dans le pool sont identifiés par le nom du participant.</p></div>
+    <div class="scroll"><table class="std lb" id="scorers"></table></div>
+  </section>
+
   <section class="block" id="nouvelles">
-    <div class="sec-head"><div><span class="eyebrow">Via ESPN · en anglais</span><h2>Nouvelles LNH</h2></div></div>
+    <div class="sec-head"><div><span class="eyebrow">RDS · Hockey</span><h2>Nouvelles du jour</h2></div><p>Les 3 dernières nouvelles hockey de RDS.</p></div>
     <div class="news" id="news"></div>
   </section>
 
@@ -322,7 +356,7 @@ footer .wrap{display:grid;gap:6px;border-top:1px solid var(--line);padding-top:1
 </main>
 
 <footer><div class="wrap">
-  <span>Résultats, feuilles de match et nouvelles : ESPN. Pendant les matchs, les points se calculent en direct chaque minute. Le robot les confirme aux 15 minutes.</span>
+  <span>Résultats, feuilles de match, classement et statistiques : ESPN. Nouvelles : RDS. Pendant les matchs, les points se calculent en direct chaque minute. Le robot les confirme aux 15 minutes.</span>
   <span id="foot"></span>
 </div></footer>
 
@@ -652,12 +686,54 @@ const badge = (st) => st ? `<span class="stt ${st.cls}" title="${esc(st.tip)}">$
 /* ---------- News ---------- */
 async function loadNews(){
   try {
-    const r = await fetch(`${API}/news?limit=12`, { cache: "no-store" }); const j = await r.json();
-    NEWS = (j.articles || []).filter(a => a.headline && a.links?.web?.href).slice(0, 9).map(a => ({ h: a.headline, d: a.description && a.description !== a.headline ? a.description : "", t: new Date(a.published), img: a.images?.[0]?.url || "", u: a.links.web.href, type: a.type }));
+    const r = await fetch("news.json?t=" + Date.now(), { cache: "no-store" }); if (!r.ok) return;
+    const j = await r.json();
+    NEWS = (j.items || []).slice(0, 3).map(n => ({ h: n.title, d: n.desc || "", t: new Date(n.date), img: n.img || "", u: n.link }));
   } catch (e) {}
 }
 function renderNews(){
-  $("#news").innerHTML = NEWS.length ? NEWS.map(n => `<a class="card nw" href="${esc(n.u)}" target="_blank" rel="noopener"><div class="nw-img">${n.img ? `<img src="${esc(n.img)}" alt="" loading="lazy" onerror="this.remove()">` : ""}<span class="nw-kind">${n.type === "Media" ? "Vidéo" : "Article"}</span></div><div class="nw-body"><time>${esc(ago(n.t))}</time><h3>${esc(n.h)}</h3>${n.d ? `<p>${esc(n.d)}</p>` : ""}</div></a>`).join("") : `<div class="empty">Nouvelles indisponibles pour l'instant.</div>`;
+  $("#news").innerHTML = NEWS.length ? NEWS.map(n => `<a class="card nw" href="${esc(n.u)}" target="_blank" rel="noopener"><div class="nw-img">${n.img ? `<img src="${esc(n.img)}" alt="" loading="lazy" onerror="this.remove()">` : ""}<span class="nw-kind">RDS</span></div><div class="nw-body"><time>${esc(ago(n.t))}</time><h3>${esc(n.h)}</h3>${n.d ? `<p>${esc(n.d)}</p>` : ""}</div></a>`).join("") : `<div class="empty">Les nouvelles de RDS s'afficheront ici au prochain passage du robot.</div>`;
+}
+
+let STAND = null, SCORERS = [], LNH_VIEW = "div";
+async function loadLNH(){
+  try {
+    const r = await fetch("https://site.api.espn.com/apis/v2/sports/hockey/nhl/standings?level=3", { cache: "no-store" });
+    if (r.ok) {
+      const j = await r.json();
+      const st = (e, n) => e.stats.find(x => x.name === n);
+      const team = (e) => ({ t: e.team.abbreviation, name: e.team.shortDisplayName || e.team.name, gp: +st(e, "gamesPlayed")?.value || 0, w: +st(e, "wins")?.value || 0, l: +st(e, "losses")?.value || 0, otl: +st(e, "otLosses")?.value || 0, pts: +st(e, "points")?.value || 0, diff: st(e, "differential")?.displayValue || st(e, "pointDifferential")?.displayValue || "", strk: st(e, "streak")?.displayValue || "", rw: +st(e, "regWins")?.value || 0 });
+      STAND = (j.children || []).map(c => ({ name: c.name, divs: (c.children || []).map(d => ({ name: d.name, teams: (d.standings?.entries || []).map(team) })) }));
+    }
+  } catch (e) {}
+  try {
+    const r = await fetch(`https://site.web.api.espn.com/apis/common/v3/sports/hockey/nhl/statistics/byathlete?region=us&lang=en&contentorigin=espn&isqualified=false&page=1&limit=30&sort=offensive.points:desc&season=${POOL.season}&seasontype=2`, { cache: "no-store" });
+    if (r.ok) {
+      const j = await r.json();
+      const cats = Object.fromEntries((j.categories || []).map(c => [c.name, c.names || []]));
+      const v = (a, c, n) => { const i = (cats[c] || []).indexOf(n); const vals = a.categories?.find(x => x.name === c)?.values || []; return i < 0 ? 0 : +vals[i] || 0; };
+      SCORERS = (j.athletes || []).map(a => ({ id: a.athlete?.id, name: a.athlete?.displayName, team: a.athlete?.teamShortName || "", pos: a.athlete?.position?.abbreviation || "", gp: v(a, "general", "games"), g: v(a, "offensive", "goals"), a: v(a, "offensive", "assists"), p: v(a, "offensive", "points") }));
+    }
+  } catch (e) {}
+}
+const PDEF = { "Eastern Conference": "Association de l'Est", "Western Conference": "Association de l'Ouest", "Atlantic Division": "Division Atlantique", "Metropolitan Division": "Division Métropolitaine", "Central Division": "Division Centrale", "Pacific Division": "Division Pacifique" };
+const sortTeams = (a, b) => b.pts - a.pts || a.gp - b.gp || b.rw - a.rw || b.w - a.w;
+function ownerOfTeam(ab){ const q = PICKS.find(x => x.type === "T" && x.team === ab); return q ? q.owner.name : ""; }
+function ownerOfPlayer(id){ const q = PICKS.find(x => x.type !== "T" && x.id === id); return q ? q.owner.name : ""; }
+function teamTable(title, teams, cutAt){
+  return `<div class="card dv"><h3>${esc(title)}</h3><div class="tw"><table class="tb"><thead><tr><th></th><th class="l">Équipe</th><th>PTS</th><th>PJ</th><th>V</th><th>D</th><th>DP</th><th>Diff.</th><th>Séq.</th></tr></thead><tbody>` +
+    teams.map((t, i) => { const o = ownerOfTeam(t.t); return `<tr class="${cutAt && i === cutAt - 1 ? "cut" : ""}"><td class="rk">${i + 1}</td><td class="l"><span class="tn">${logo(t.t, true)}${esc(POOL.teams[t.t]?.name || t.name)}${o ? ` <span class="owner">${esc(o)}</span>` : ""}</span></td><td class="pt">${t.pts}</td><td>${t.gp}</td><td>${t.w}</td><td>${t.l}</td><td>${t.otl}</td><td>${esc(t.diff)}</td><td>${esc(t.strk)}</td></tr>`; }).join("") + "</tbody></table></div></div>";
+}
+function renderLNH(){
+  document.querySelectorAll("#lnhView button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.v === LNH_VIEW)));
+  const g = $("#lnhGrid");
+  if (!STAND) { g.className = "lnh-grid one"; g.innerHTML = `<div class="empty">Classement indisponible pour l'instant.</div>`; }
+  else if (LNH_VIEW === "div") { g.className = "lnh-grid"; g.innerHTML = STAND.flatMap(c => c.divs).map(d => teamTable(PDEF[d.name] || d.name, d.teams.slice().sort(sortTeams), 3)).join(""); }
+  else if (LNH_VIEW === "conf") { g.className = "lnh-grid"; g.innerHTML = STAND.map(c => teamTable(PDEF[c.name] || c.name, c.divs.flatMap(d => d.teams).sort(sortTeams), 8)).join(""); }
+  else { g.className = "lnh-grid one"; g.innerHTML = teamTable("Ligue nationale de hockey", STAND.flatMap(c => c.divs.flatMap(d => d.teams)).sort(sortTeams), 0); }
+  $("#scorers").innerHTML = SCORERS.length ? `<thead><tr><th>#</th><th class="l">Joueur</th><th>PTS</th><th>B</th><th>P</th><th>PJ</th><th class="l">Pool</th></tr></thead><tbody>` +
+    SCORERS.map((x, i) => { const o = ownerOfPlayer(x.id); const rank = i > 0 && SCORERS[i - 1].p === x.p ? "" : i + 1; return `<tr><td class="pos">${rank}</td><td class="nm2"><span class="pl">${face({ type: "F", id: x.id, name: x.name || "" })}<span>${esc(x.name)}<small>${logo(x.team, true)} ${esc(POOL.teams[x.team]?.name || x.team)}${x.pos ? " · " + esc(x.pos) : ""}</small></span></span></td><td class="pts">${x.p}</td><td>${x.g}</td><td>${x.a}</td><td>${x.gp}</td><td class="l">${o ? `<span class="owner">${esc(o)}</span>` : `<span class="free">Libre</span>`}</td></tr>`; }).join("") + "</tbody>"
+    : `<tbody><tr><td class="l" style="padding:18px;color:var(--muted)">Statistiques indisponibles pour l'instant.</td></tr></tbody>`;
 }
 
 /* ---------- Boot ---------- */
@@ -672,7 +748,7 @@ async function loadData(){
 function renderAll(){
   compute();
   if (!SEL) SEL = ls.get("poolhockey:sel") || R.now[0].p.id;
-  renderStatus(); renderStandings(); renderDay(); renderChips(); renderLineup(); renderLeaders(); renderNews();
+  renderStatus(); renderStandings(); renderDay(); renderChips(); renderLineup(); renderLeaders(); renderLNH(); renderNews();
 }
 function select(id, scroll){
   SEL = id; ls.set("poolhockey:sel", id); renderChips(); renderLineup();
@@ -682,7 +758,7 @@ async function boot(){
   await loadData();
   VIEW_DAY = TODAY();
   await Promise.all([loadDay(VIEW_DAY), loadNews(), loadInjuries(), (!DATA.closedThrough || addDays(VIEW_DAY, -1) > DATA.closedThrough) ? loadDay(addDays(VIEW_DAY, -1)) : null]);
-  await liveDays();
+  await Promise.all([liveDays(), loadLNH()]); tick.lnh = Date.now();
   // pas de match aujourd'hui : montrer le prochain jour de match
   if (!SB[VIEW_DAY]?.games.length) {
     for (let i = 1; i <= 5; i++) { const d = addDays(VIEW_DAY, i); await loadDay(d); if (SB[d]?.games.length) { VIEW_DAY = d; break; } }
@@ -691,6 +767,7 @@ async function boot(){
   $("#std").addEventListener("click", e => { const tr = e.target.closest("tr[data-p]"); if (tr) select(tr.dataset.p, true); });
   $("#std").addEventListener("keydown", e => { const tr = e.target.closest("tr[data-p]"); if (tr && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); select(tr.dataset.p, true); } });
   $("#nightList").addEventListener("toggle", e => { const el = e.target; if (el.matches?.("details.nl")) { if (el.open) OPEN.add(el.dataset.p); else OPEN.delete(el.dataset.p); } }, true);
+  $("#lnhView").addEventListener("click", e => { const b = e.target.closest("button[data-v]"); if (b) { LNH_VIEW = b.dataset.v; renderLNH(); } });
   $("#chips").addEventListener("click", e => { const b = e.target.closest("button[data-p]"); if (b) select(b.dataset.p); });
   $("#dPrev").onclick = async () => { VIEW_DAY = addDays(VIEW_DAY, -1); await loadDay(VIEW_DAY); renderDay(); };
   $("#dNext").onclick = async () => { VIEW_DAY = addDays(VIEW_DAY, 1); await loadDay(VIEW_DAY); renderDay(); };
@@ -707,6 +784,7 @@ async function tick(){
       const yd = addDays(TODAY(), -1);
       if (!DATA.closedThrough || yd > DATA.closedThrough) await loadDay(yd, (SB[yd]?.games || []).some(g => g.st === "in"));
       if (Date.now() - (tick.data || 0) > 3 * 60e3) { await Promise.all([loadData(), loadNews(), loadInjuries()]); tick.data = Date.now(); }
+      if (Date.now() - (tick.lnh || 0) > 10 * 60e3) { await loadLNH(); tick.lnh = Date.now(); }
       await liveDays();
       renderAll();
     }
