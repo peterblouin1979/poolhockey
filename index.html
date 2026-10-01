@@ -210,14 +210,17 @@ table.std{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .lu-sum b{font:900 1.6rem/1 var(--display)}
 .lu-sum span{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
 table.lu{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
-.lu th,.lu td{padding:8px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
+.lu th,.lu td{padding:4px 10px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line)}
 .lu thead th{font:600 .7rem var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 .lu th.l,.lu td.l{text-align:left}
 .lu tr.out td{opacity:.45}
-.lu .pl{display:flex;align-items:center;gap:10px}
-.lu .pl small{color:var(--muted);font-size:.76rem;display:block}
-.lu .pts{font:900 1.2rem var(--display)}
-.lu .cnt{font:700 .66rem/1 var(--body);text-transform:uppercase;letter-spacing:.06em;padding:4px 7px;border-radius:999px;background:var(--win-soft);color:var(--win)}
+.lu .pl{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.lu .pl b{font-weight:600}
+.lu .hs{width:24px;height:24px;font-size:.6rem}
+.lu .tm{width:24px;height:24px}
+.lu .pl small{color:var(--muted);font-size:.76rem}
+.lu .pts{font:900 1.05rem var(--display)}
+.lu .cnt{font:700 .6rem/1 var(--body);text-transform:uppercase;letter-spacing:.06em;padding:3px 6px;border-radius:999px;background:var(--win-soft);color:var(--win)}
 .lu .cnt.no{background:transparent;color:var(--faint);border:1px solid var(--line-2)}
 .lu tbody tr:last-child td{border-bottom:0}
 .hs{position:relative;width:34px;height:34px;border-radius:50%;overflow:hidden;background:var(--panel-2);flex:none;display:grid;place-items:center;font:800 .75rem var(--display);color:var(--muted)}
@@ -702,7 +705,7 @@ function renderLineup(){
   const rows = r.picks.slice().sort((a, b) => b.pts - a.pts || b.g - a.g || a.r - b.r);
   $("#lu").innerHTML = `<thead><tr><th>Ronde</th><th class="l">Choix</th><th>Pts</th><th>B</th><th>P</th><th>PJ</th><th>V</th><th>Boni</th><th>Ce soir</th><th class="l">Compte</th></tr></thead><tbody>` +
     rows.map(x => { const q = x.q; const isT = q.type === "T";
-      return `<tr class="${x.counted ? "" : "out"}"><td>${q.r}</td><td class="l"><span class="pl">${face(q)}<span>${esc(isT ? "Équipe " + q.name : q.name)} ${badge(statusOf(q))}<small>${esc(posLbl(q))} · ${esc(POOL.teams[teamOf(q)]?.name || teamOf(q))}${statusOf(q)?.info ? " · " + esc(statusOf(q).info) : ""}</small></span></span></td>
+      return `<tr class="${x.counted ? "" : "out"}"><td>${q.r}</td><td class="l"><span class="pl">${face(q)}<b>${esc(isT ? "Équipe " + q.name : q.name)}</b>${badge(statusOf(q))}<small>${esc(posLbl(q))} · ${esc(isT ? teamOf(q) : (POOL.teams[teamOf(q)]?.name || teamOf(q)))}${statusOf(q)?.info ? " · " + esc(statusOf(q).info) : ""}</small></span></td>
       <td class="pts">${x.pts}</td><td>${isT ? "—" : x.g}</td><td>${isT ? "—" : x.a}</td><td>${x.gp}</td><td>${q.type === "G" ? x.w : isT ? x.tw : "—"}</td><td>${q.type === "G" ? (x.so ? x.so + " BL" : "—") : isT ? (x.otl ? x.otl + " DP" : "—") : (x.ht ? x.ht + " TC" : "—")}</td><td>${q.today > 0 ? "+" + q.today : "—"}</td><td class="l"><span class="cnt ${x.counted ? "" : "no"}">${x.counted ? "Compte" : "Hors top 10"}</span></td></tr>`; }).join("") + "</tbody>";
 }
 
