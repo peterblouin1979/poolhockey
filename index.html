@@ -109,6 +109,7 @@ table.std{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .std .pts{font:900 1.1rem var(--display);color:var(--ink)}
 .std .up{color:var(--win)} .std .dn{color:var(--loss)} .std .zero{color:var(--faint)}
 .std .tonight{color:var(--ice);font-weight:700}
+.std .hier,.lu .hier{font-weight:700} .lu td.zero{color:var(--faint)}
 
 /* Tonight */
 .day-nav{display:flex;align-items:center;gap:6px}
@@ -287,9 +288,9 @@ table.tb{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 /* Cellulaire : seulement les colonnes essentielles (les autres restent visibles sur un plus grand écran) */
 @media (max-width:640px){
   .std th,.std td{padding:5px 6px}
-  #std th:nth-child(n+6):not(:nth-child(8)),#std td:nth-child(n+6):not(:nth-child(8)){display:none}
+  #std th:nth-child(n+6):not(:nth-child(8)):not(:nth-child(9)),#std td:nth-child(n+6):not(:nth-child(8)):not(:nth-child(9)){display:none}
   .lu th,.lu td{padding:4px 6px}
-  #lu th:nth-child(1),#lu td:nth-child(1),#lu th:nth-child(6),#lu td:nth-child(6),#lu th:nth-child(7),#lu td:nth-child(7),#lu th:nth-child(8),#lu td:nth-child(8),#lu th:nth-child(10),#lu td:nth-child(10){display:none}
+  #lu th:nth-child(1),#lu td:nth-child(1),#lu th:nth-child(6),#lu td:nth-child(6),#lu th:nth-child(7),#lu td:nth-child(7),#lu th:nth-child(8),#lu td:nth-child(8),#lu th:nth-child(11),#lu td:nth-child(11){display:none}
   #lu .pl small{display:none}
   .tb th,.tb td{padding:4px 5px}
   .tb th:nth-child(8),.tb td:nth-child(8),.tb th:nth-child(9),.tb td:nth-child(9){display:none}
@@ -308,8 +309,9 @@ table.tb{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
   #lu .pl b,#scorers .pl b{min-width:0;overflow:hidden;text-overflow:ellipsis}
   #lu .hs,#lu .tm,#scorers .hs{width:22px;height:22px}
   #lu thead th,#scorers thead th{white-space:normal;line-height:1.1}
-  #lu th,#lu td{padding:4px 3px} #lu td.l,#lu th.l{padding-left:6px} #lu th:last-child,#lu td:nth-child(9){padding-right:6px}
-  #lu th:nth-child(3){width:36px} #lu th:nth-child(4),#lu th:nth-child(5){width:26px} #lu th:nth-child(9){width:48px}
+  #lu th,#lu td{padding:4px 3px} #lu td.l,#lu th.l{padding-left:6px} #lu th:nth-child(10),#lu td:nth-child(10){padding-right:6px}
+  #lu th:nth-child(3){width:32px} #lu th:nth-child(4),#lu th:nth-child(5){width:24px} #lu th:nth-child(9){width:40px} #lu th:nth-child(10){width:38px}
+  .lu-sum{gap:14px} .lu-sum span{letter-spacing:.05em}
   #scorers th,#scorers td{padding:4px 3px} #scorers td.nm2{padding-left:4px}
   #scorers th:nth-child(1){width:26px} #scorers th:nth-child(3){width:34px} #scorers th:nth-child(4),#scorers th:nth-child(5){width:26px} #scorers th:nth-child(7){width:66px}
   #scorers td.l{overflow:hidden;padding-right:5px} #scorers .owner{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
@@ -507,12 +509,15 @@ function compute(){
   const now = standingsAt(DATES.length - 1);
   const by = (rows) => Object.fromEntries(rows.map(r => [r.p.id, r]));
   const prev = by(standingsAt(idxBefore(today)));
+  const yday = addDays(today, -1);
+  const prev2 = by(standingsAt(idxBefore(yday)));
   const p7 = by(standingsAt(idxBefore(addDays(today, -6))));
   const p30 = by(standingsAt(idxBefore(addDays(today, -29))));
-  now.forEach(r => { r.tonight = r.pts - prev[r.p.id].pts; r.w7 = r.pts - p7[r.p.id].pts; r.w30 = r.pts - p30[r.p.id].pts; r.dep = prev[r.p.id].rank - r.rank; r.gap = now[0].pts - r.pts; });
+  now.forEach(r => { r.tonight = r.pts - prev[r.p.id].pts; r.hier = prev[r.p.id].pts - prev2[r.p.id].pts; r.w7 = r.pts - p7[r.p.id].pts; r.w30 = r.pts - p30[r.p.id].pts; r.dep = prev[r.p.id].rank - r.rank; r.gap = now[0].pts - r.pts; });
   // today's pick points
   const kToday = idxThrough(today), kPrev = idxBefore(today);
-  PICKS.forEach(q => { q.today = pts(q, statAt(q, kToday)) - pts(q, statAt(q, kPrev)); });
+  const kY = idxBefore(yday);
+  PICKS.forEach(q => { q.today = pts(q, statAt(q, kToday)) - pts(q, statAt(q, kPrev)); q.hier = pts(q, statAt(q, kPrev)) - pts(q, statAt(q, kY)); q.hierGp = statAt(q, kPrev)[0] - statAt(q, kY)[0]; });
   R = { now, today };
 }
 
@@ -551,9 +556,9 @@ function renderHero(){
 /* ---------- Render: standings ---------- */
 function renderStandings(){
   const cell = (n, cls) => `<td class="${n > 0 ? cls || "" : "zero"}">${n > 0 ? "+" + n : n < 0 ? n : "0"}</td>`;
-  $("#std").innerHTML = `<thead><tr><th>Pos</th><th class="l">Participant</th><th>PPts</th><th>B</th><th>P</th><th>PJ</th><th>TC</th><th>Ce soir</th><th>7 j</th><th>30 j</th><th>PPts/PJ</th><th>Dép.</th><th>Écart</th></tr></thead><tbody>` +
+  $("#std").innerHTML = `<thead><tr><th>Pos</th><th class="l">Participant</th><th>PPts</th><th>B</th><th>P</th><th>PJ</th><th>TC</th><th>Ce soir</th><th>Hier</th><th>7 j</th><th>30 j</th><th>PPts/PJ</th><th>Dép.</th><th>Écart</th></tr></thead><tbody>` +
     R.now.map(r => `<tr class="g${r.rank}" data-p="${r.p.id}" tabindex="0"><td class="pos">${r.rank}</td><td class="l nm">${esc(r.p.name)}${(() => { const n = r.picks.filter(x => statusOf(x.q)?.out).length; return n ? `<span class="inj-n" title="${n} joueur${n > 1 ? "s" : ""} blessé${n > 1 ? "s" : ""}, suspendu${n > 1 ? "s" : ""} ou sans contrat">${n}</span>` : ""; })()}</td><td class="pts">${r.pts}</td><td>${r.b}</td><td>${r.pa}</td><td>${r.gp}</td><td>${r.tc}</td>
-      ${cell(r.tonight, "tonight")}${cell(r.w7)}${cell(r.w30)}<td>${r.gp ? (r.pts / r.gp).toFixed(2).replace(".", ",") : "0,00"}</td>
+      ${cell(r.tonight, "tonight")}${cell(r.hier, "hier")}${cell(r.w7)}${cell(r.w30)}<td>${r.gp ? (r.pts / r.gp).toFixed(2).replace(".", ",") : "0,00"}</td>
       <td class="${r.dep > 0 ? "up" : r.dep < 0 ? "dn" : "zero"}">${r.dep > 0 ? "▲" + r.dep : r.dep < 0 ? "▼" + (-r.dep) : "—"}</td><td>${r.gap}</td></tr>`).join("") + "</tbody>";
 }
 
@@ -741,12 +746,12 @@ function renderChips(){
 function renderLineup(){
   const r = R.now.find(x => x.p.id === SEL) || R.now[0];
   $("#luHead").innerHTML = `<div><span class="eyebrow">${r.rank === 1 ? "1<sup>er</sup>" : r.rank + "<sup>e</sup>"} au classement</span><h3>${esc(r.p.name)}</h3></div>
-    <div class="lu-sum"><div><b>${r.pts}</b><span>Points</span></div><div><b>${r.gp}</b><span>Matchs</span></div><div><b>${r.tonight > 0 ? "+" + r.tonight : 0}</b><span>Ce soir</span></div><div><b>${r.gap ? "−" + r.gap : "—"}</b><span>Écart</span></div></div>`;
+    <div class="lu-sum"><div><b>${r.pts}</b><span>Points</span></div><div><b>${r.gp}</b><span>Matchs</span></div><div><b>${r.tonight > 0 ? "+" + r.tonight : 0}</b><span>Ce soir</span></div><div><b>${r.hier > 0 ? "+" + r.hier : 0}</b><span>Hier</span></div><div><b>${r.gap ? "−" + r.gap : "—"}</b><span>Écart</span></div></div>`;
   const rows = r.picks.slice().sort((a, b) => b.pts - a.pts || b.g - a.g || a.r - b.r);
-  $("#lu").innerHTML = `<thead><tr><th>Ronde</th><th class="l">Choix</th><th>Pts</th><th>B</th><th>P</th><th>PJ</th><th>V</th><th>Boni</th><th>Ce soir</th><th class="l">Compte</th></tr></thead><tbody>` +
+  $("#lu").innerHTML = `<thead><tr><th>Ronde</th><th class="l">Choix</th><th>Pts</th><th>B</th><th>P</th><th>PJ</th><th>V</th><th>Boni</th><th>Ce soir</th><th>Hier</th><th class="l">Compte</th></tr></thead><tbody>` +
     rows.map(x => { const q = x.q; const isT = q.type === "T";
       return `<tr class="${x.counted ? "" : "out"}"><td>${q.r}</td><td class="l"><span class="pl">${face(q)}<b>${isT ? nameHTML("Équipe " + q.name, q.name) : nameHTML(q.name, shortName(q.name))}</b>${badge(statusOf(q))}<small>${esc(posLbl(q))} · ${esc(isT ? teamOf(q) : (POOL.teams[teamOf(q)]?.name || teamOf(q)))}${statusOf(q)?.info ? " · " + esc(statusOf(q).info) : ""}</small></span></td>
-      <td class="pts">${x.pts}</td><td>${isT ? "—" : x.g}</td><td>${isT ? "—" : x.a}</td><td>${x.gp}</td><td>${q.type === "G" ? x.w : isT ? x.tw : "—"}</td><td>${q.type === "G" ? (x.so ? x.so + " BL" : "—") : isT ? (x.otl ? x.otl + " DP" : "—") : (x.ht ? x.ht + " TC" : "—")}</td><td>${q.today > 0 ? "+" + q.today : "—"}</td><td class="l"><span class="cnt ${x.counted ? "" : "no"}">${x.counted ? "Compte" : "Hors top 10"}</span></td></tr>`; }).join("") + "</tbody>";
+      <td class="pts">${x.pts}</td><td>${isT ? "—" : x.g}</td><td>${isT ? "—" : x.a}</td><td>${x.gp}</td><td>${q.type === "G" ? x.w : isT ? x.tw : "—"}</td><td>${q.type === "G" ? (x.so ? x.so + " BL" : "—") : isT ? (x.otl ? x.otl + " DP" : "—") : (x.ht ? x.ht + " TC" : "—")}</td><td>${q.today > 0 ? "+" + q.today : "—"}</td><td class="${q.hier > 0 ? "hier" : "zero"}">${q.hier > 0 ? "+" + q.hier : q.hierGp > 0 ? "0" : "—"}</td><td class="l"><span class="cnt ${x.counted ? "" : "no"}">${x.counted ? "Compte" : "Hors top 10"}</span></td></tr>`; }).join("") + "</tbody>";
 }
 
 /* ---------- Render: leaders ---------- */
