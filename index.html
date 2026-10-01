@@ -447,6 +447,8 @@ let POOL = null, DATA = null, NEWS = [], SEL = null, VIEW_DAY = null, SB = {};
 const TODAY = () => etDate(new Date());
 
 /* ---------- Logos & photos ---------- */
+// ESPN écrit parfois Utah « UTA » (horaire, sommaires) et parfois « UTAH » (équipes, alignements) : on garde une seule forme.
+const nab = (a) => (a === "UTA" ? "UTAH" : a || "");
 function logo(ab, sm){
   const t = POOL.teams[ab] || { color: "#334455" };
   return `<span class="tm ${sm ? "sm" : ""}" style="--tc:${t.color}" title="${esc(t.loc ? t.loc + " " + t.name : ab)}"><b>${esc(ab)}</b><img src="https://a.espncdn.com/i/teamlogos/nhl/500/${ab.toLowerCase()}.png" alt="" loading="lazy" onload="this.classList.add('ok')" onerror="this.remove()"></span>`;
@@ -571,11 +573,11 @@ async function loadDay(d, force){
     const games = (j.events || []).filter(e => !e.season || e.season.type === 2).map(e => {
       const c = e.competitions[0], H = c.competitors.find(x => x.homeAway === "home"), A = c.competitors.find(x => x.homeAway === "away");
       const off = /POSTPONED|CANCELED|SUSPENDED/.test(e.status?.type?.name || "");
-      return { id: e.id, date: new Date(e.date), st: off ? "off" : e.status.type.state, det: e.status.type.shortDetail || "", per: e.status?.period || 0, a: { t: A.team.abbreviation, s: +A.score || 0, w: !!A.winner }, h: { t: H.team.abbreviation, s: +H.score || 0, w: !!H.winner }, tv: (c.broadcasts?.[0]?.names || []).join(", ") };
+      return { id: e.id, date: new Date(e.date), st: off ? "off" : e.status.type.state, det: e.status.type.shortDetail || "", per: e.status?.period || 0, a: { t: nab(A.team.abbreviation), s: +A.score || 0, w: !!A.winner }, h: { t: nab(H.team.abbreviation), s: +H.score || 0, w: !!H.winner }, tv: (c.broadcasts?.[0]?.names || []).join(", ") };
     });
     SB[d] = { at: Date.now(), games };
   } catch (e) {
-    const g = (DATA?.games?.[d] || []).map(x => ({ id: x[0], a: { t: x[1], s: x[3] }, h: { t: x[2], s: x[4] }, st: x[5], det: x[6], date: new Date(x[8]) }));
+    const g = (DATA?.games?.[d] || []).map(x => ({ id: x[0], a: { t: nab(x[1]), s: x[3] }, h: { t: nab(x[2]), s: x[4] }, st: x[5], det: x[6], date: new Date(x[8]) }));
     g.forEach(x => { if (x.st === "post") { x.a.w = x.a.s > x.h.s; x.h.w = x.h.s > x.a.s; } });
     SB[d] = { at: Date.now(), games: g };
   }
@@ -595,11 +597,11 @@ async function getSummary(g){
   const r = await fetch(`${API}/summary?event=${g.id}`, { cache: "no-store" });
   if (!r.ok) throw new Error("summary " + r.status);
   const j = await r.json();
-  const teamAb = Object.fromEntries((j.boxscore?.players || []).map(tb => [tb.team?.id, tb.team?.abbreviation]));
+  const teamAb = Object.fromEntries((j.boxscore?.players || []).map(tb => [tb.team?.id, nab(tb.team?.abbreviation)]));
   const names = {};
   (j.boxscore?.players || []).forEach(tb => (tb.statistics || []).forEach(gr => (gr.athletes || []).forEach(a => { if (a.athlete?.id) names[a.athlete.id] = a.athlete.displayName || a.athlete.shortName; })));
   const data = { names, plays: (j.plays || []).filter(p => p.scoringPlay).map(p => ({ per: p.period?.number || 0, clock: p.clock?.displayValue || "", ab: teamAb[p.team?.id] || "", str: p.strength?.text || "", en: /empty net/i.test(p.strength?.text || "") || !!p.emptyNet, text: p.text || "", parts: (p.participants || []).map(x => [x.athlete?.id, x.type]) })),
-    box: (j.boxscore?.players || []).map(tb => ({ ab: tb.team?.abbreviation, groups: (tb.statistics || []).map(gr => ({ name: gr.name, keys: gr.keys || [], ath: (gr.athletes || []).map(a => [a.athlete?.id, a.stats || []]) })) })) };
+    box: (j.boxscore?.players || []).map(tb => ({ ab: nab(tb.team?.abbreviation), groups: (tb.statistics || []).map(gr => ({ name: gr.name, keys: gr.keys || [], ath: (gr.athletes || []).map(a => [a.athlete?.id, a.stats || []]) })) })) };
   SUM[g.id] = { at: Date.now(), data, final: g.st === "post" };
   return data;
 }
@@ -815,7 +817,7 @@ async function loadLNH(){
     if (r.ok) {
       const j = await r.json();
       const st = (e, n) => e.stats.find(x => x.name === n);
-      const team = (e) => ({ t: e.team.abbreviation, name: e.team.shortDisplayName || e.team.name, gp: +st(e, "gamesPlayed")?.value || 0, w: +st(e, "wins")?.value || 0, l: +st(e, "losses")?.value || 0, otl: +st(e, "otLosses")?.value || 0, pts: +st(e, "points")?.value || 0, diff: st(e, "pointDifferential")?.displayValue || st(e, "differential")?.displayValue || "", strk: st(e, "streak")?.displayValue || "", rw: +st(e, "regWins")?.value || 0 });
+      const team = (e) => ({ t: nab(e.team.abbreviation), name: e.team.shortDisplayName || e.team.name, gp: +st(e, "gamesPlayed")?.value || 0, w: +st(e, "wins")?.value || 0, l: +st(e, "losses")?.value || 0, otl: +st(e, "otLosses")?.value || 0, pts: +st(e, "points")?.value || 0, diff: st(e, "pointDifferential")?.displayValue || st(e, "differential")?.displayValue || "", strk: st(e, "streak")?.displayValue || "", rw: +st(e, "regWins")?.value || 0 });
       STAND = (j.children || []).map(c => ({ name: c.name, divs: (c.children || []).map(d => ({ name: d.name, teams: (d.standings?.entries || []).map(team) })) }));
     }
   } catch (e) {}
@@ -825,7 +827,7 @@ async function loadLNH(){
       const j = await r.json();
       const cats = Object.fromEntries((j.categories || []).map(c => [c.name, c.names || []]));
       const v = (a, c, n) => { const i = (cats[c] || []).indexOf(n); const vals = a.categories?.find(x => x.name === c)?.values || []; return i < 0 ? 0 : +vals[i] || 0; };
-      SCORERS = (j.athletes || []).map(a => ({ id: a.athlete?.id, name: a.athlete?.displayName, team: a.athlete?.teamShortName || "", pos: a.athlete?.position?.abbreviation || "", gp: v(a, "general", "games"), g: v(a, "offensive", "goals"), a: v(a, "offensive", "assists"), p: v(a, "offensive", "points") }));
+      SCORERS = (j.athletes || []).map(a => ({ id: a.athlete?.id, name: a.athlete?.displayName, team: nab(a.athlete?.teamShortName), pos: a.athlete?.position?.abbreviation || "", gp: v(a, "general", "games"), g: v(a, "offensive", "goals"), a: v(a, "offensive", "assists"), p: v(a, "offensive", "points") }));
     }
   } catch (e) {}
 }

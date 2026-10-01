@@ -14,6 +14,8 @@ export function addDays(s, n) {
   d.setUTCDate(d.getUTCDate() + n);
   return d.toISOString().slice(0, 10);
 }
+// ESPN écrit parfois Utah « UTA » (horaire, sommaires) et parfois « UTAH » (équipes, alignements) : on garde une seule forme.
+export const nab = (a) => (a === "UTA" ? "UTAH" : a || "");
 const toiSec = (t) => {
   if (!t) return 0;
   const [m, s] = String(t).split(":").map(Number);
@@ -44,14 +46,14 @@ export async function update(pool, prev, getJSON, now = new Date()) {
       const off = /POSTPONED|CANCELED|SUSPENDED/.test(e.status?.type?.name || "");
       const st = off ? "off" : e.status?.type?.state || "pre";
       const period = e.status?.period || 0;
-      glist.push([e.id, A.team.abbreviation, H.team.abbreviation, +A.score || 0, +H.score || 0, st, e.status?.type?.shortDetail || "", period, e.date]);
+      glist.push([e.id, nab(A.team.abbreviation), nab(H.team.abbreviation), +A.score || 0, +H.score || 0, st, e.status?.type?.shortDetail || "", period, e.date]);
       if (st === "off") continue;
       if (st !== "post") dayFinal = false;
       if (st === "pre") continue;
 
       // Équipes : victoire 2, défaite en prolongation / tirs de barrage 1 (seulement quand le match est fini)
       for (const me of [A, H]) {
-        const ab = me.team.abbreviation;
+        const ab = nab(me.team.abbreviation);
         if (!tms.has(ab)) continue;
         const row = day.t[ab] || (day.t[ab] = [0, 0, 0]);
         row[0]++;
