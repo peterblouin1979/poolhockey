@@ -294,7 +294,7 @@ footer .wrap{display:grid;gap:6px;border-top:1px solid var(--line);padding-top:1
 </header>
 
 <nav class="nav" aria-label="Sections"><div class="wrap">
-  <a href="#classement">Classement</a><a href="#alignements">Alignements</a><a href="#soir">Ce soir</a><a href="#meneurs">Meneurs</a><a href="#lnh">Classement LNH</a><a href="#pointeurs">Pointeurs LNH</a><a href="#nouvelles">Nouvelles RDS</a><a href="#reglements">Règlements</a>
+  <a href="#classement">Classement</a><a href="#alignements">Alignements</a><a href="#soir">Ce soir</a><a href="#lnh">Classement LNH</a><a href="#pointeurs">Pointeurs LNH</a><a href="#nouvelles">Nouvelles RDS</a><a href="#reglements">Règlements</a>
 </div></nav>
 
 <main class="wrap">
@@ -321,11 +321,6 @@ footer .wrap{display:grid;gap:6px;border-top:1px solid var(--line);padding-top:1
     <div class="nlist" id="nightList"></div>
     <div><span class="eyebrow" id="gamesLbl">Les matchs</span></div>
     <div class="games" id="games"></div>
-  </section>
-
-  <section class="block" id="meneurs">
-    <div class="sec-head"><div><span class="eyebrow">Les choix les plus payants</span><h2>Meneurs du pool</h2></div></div>
-    <div class="leaders" id="leaders"></div>
   </section>
 
   <section class="block" id="lnh">
@@ -803,7 +798,7 @@ async function loadData(){
 function renderAll(){
   compute();
   if (!SEL) SEL = ls.get("poolhockey:sel") || R.now[0].p.id;
-  renderStatus(); renderStandings(); renderDay(); renderChips(); renderLineup(); renderLeaders(); renderLNH(); renderNews();
+  renderStatus(); renderStandings(); renderDay(); renderChips(); renderLineup(); renderLNH(); renderNews();
 }
 function select(id, scroll){
   SEL = id; ls.set("poolhockey:sel", id); renderChips(); renderLineup();
