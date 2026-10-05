@@ -109,7 +109,7 @@ table.std{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .std .pts{font:900 1.1rem var(--display);color:var(--ink)}
 .std .up{color:var(--win)} .std .dn{color:var(--loss)} .std .zero{color:var(--faint)}
 .std .tonight{color:var(--ice);font-weight:700}
-.std .hier,.lu .hier{font-weight:700} .lu td.zero{color:var(--faint)}
+.std .hier,.lu .hier{font-weight:700} .lu td.tn-on{color:var(--ice);font-weight:700} .lu td.tn-play{color:var(--ink);font-weight:600} .lu td.zero{color:var(--faint)}
 
 /* Tonight */
 .day-nav{display:flex;align-items:center;gap:6px}
@@ -808,6 +808,8 @@ function renderChips(){
   $("#chips").innerHTML = R.now.map(r => `<button type="button" data-p="${r.p.id}" aria-pressed="${r.p.id === SEL}"><small>${r.rank}</small>${esc(r.p.name)}</button>`).join("");
 }
 function renderLineup(){
+  // équipes qui jouent ce soir (matchs reportés exclus) : leurs joueurs affichent 0 au lieu de « — »
+  const playTonight = new Set((SB[TODAY()]?.games || []).filter(g => g.st !== "off").flatMap(g => [g.a.t, g.h.t]));
   const r = R.now.find(x => x.p.id === SEL) || R.now[0];
   $("#luHead").innerHTML = `<div><span class="eyebrow">${r.rank === 1 ? "1<sup>er</sup>" : r.rank + "<sup>e</sup>"} au classement</span><h3>${esc(r.p.name)}</h3></div>
     <div class="lu-sum"><div><b>${r.pts}</b><span>Points</span></div><div><b>${r.gp}</b><span>Matchs</span></div><div><b>${r.tonight > 0 ? "+" + r.tonight : 0}</b><span>Ce soir</span></div><div><b>${r.hier > 0 ? "+" + r.hier : 0}</b><span>Hier</span></div><div><b>${r.gap ? "−" + r.gap : "—"}</b><span>Écart</span></div></div>`;
@@ -815,7 +817,7 @@ function renderLineup(){
   $("#lu").innerHTML = `<thead><tr><th>Ronde</th><th class="l">Choix</th><th>Pts</th><th>B</th><th>P</th><th>PJ</th><th>V</th><th>Boni</th><th>Ce soir</th><th>Hier</th><th class="l">Compte</th></tr></thead><tbody>` +
     rows.map(x => { const q = x.q; const isT = q.type === "T";
       return `<tr class="${x.counted ? "" : "out"}${isT ? "" : " clk"}"${isT ? "" : ` data-a="${esc(q.id)}" tabindex="0"`}><td>${q.r}</td><td class="l"><span class="pl">${face(q)}<b>${isT ? nameHTML("Équipe " + q.name, q.name) : nameHTML(q.name, shortName(q.name))}</b>${badge(statusOf(q))}<small>${esc(posLbl(q))} · ${esc(isT ? teamOf(q) : (POOL.teams[teamOf(q)]?.name || teamOf(q)))}${statusOf(q)?.info ? " · " + esc(statusOf(q).info) : ""}</small></span></td>
-      <td class="pts">${x.pts}</td><td>${isT ? "—" : x.g}</td><td>${isT ? "—" : x.a}</td><td>${x.gp}</td><td>${q.type === "G" ? x.w : isT ? x.tw : "—"}</td><td>${q.type === "G" ? (x.so ? x.so + " BL" : "—") : isT ? (x.otl ? x.otl + " DP" : "—") : (x.ht ? x.ht + " TC" : "—")}</td><td>${q.today > 0 ? "+" + q.today : "—"}</td><td class="${q.hier > 0 ? "hier" : "zero"}">${q.hier > 0 ? "+" + q.hier : q.hierGp > 0 ? "0" : "—"}</td><td class="l"><span class="cnt ${x.counted ? "" : "no"}">${x.counted ? "Compte" : "Hors top 10"}</span></td></tr>`; }).join("") + "</tbody>";
+      <td class="pts">${x.pts}</td><td>${isT ? "—" : x.g}</td><td>${isT ? "—" : x.a}</td><td>${x.gp}</td><td>${q.type === "G" ? x.w : isT ? x.tw : "—"}</td><td>${q.type === "G" ? (x.so ? x.so + " BL" : "—") : isT ? (x.otl ? x.otl + " DP" : "—") : (x.ht ? x.ht + " TC" : "—")}</td><td class="${q.today > 0 ? "tn-on" : playTonight.has(teamOf(q)) && !statusOf(q)?.out ? "tn-play" : "zero"}">${q.today > 0 ? "+" + q.today : playTonight.has(teamOf(q)) && !statusOf(q)?.out ? "0" : "—"}</td><td class="${q.hier > 0 ? "hier" : "zero"}">${q.hier > 0 ? "+" + q.hier : q.hierGp > 0 ? "0" : "—"}</td><td class="l"><span class="cnt ${x.counted ? "" : "no"}">${x.counted ? "Compte" : "Hors top 10"}</span></td></tr>`; }).join("") + "</tbody>";
 }
 
 /* ---------- Render: leaders ---------- */
