@@ -109,7 +109,7 @@ table.std{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 .std .pts{font:900 1.1rem var(--display);color:var(--ink)}
 .std .up{color:var(--win)} .std .dn{color:var(--loss)} .std .zero{color:var(--faint)}
 .std .tonight{color:var(--ice);font-weight:700}
-.std .hier,.lu .hier{font-weight:700} .lu td.tn-on{color:var(--ice);font-weight:700} .lu td.tn-play{color:var(--ink);font-weight:600} .lu td.zero{color:var(--faint)}
+.std .hier,.lu .hier{font-weight:700} .lu td.dn,.pr .pp.dn{color:var(--loss);font-weight:700} .lu tr.out td.dn{opacity:1} .lu-note{margin-top:10px} .sw-note{padding:8px 0 4px} .lu-note b,.sw-note b{color:var(--ink)} .lu td.tn-on{color:var(--ice);font-weight:700} .lu td.tn-play{color:var(--ink);font-weight:600} .lu td.zero{color:var(--faint)}
 
 /* Tonight */
 .day-nav{display:flex;align-items:center;gap:6px}
@@ -289,6 +289,8 @@ table.tb{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
 @media (max-width:640px){
   .std th,.std td{padding:5px 6px}
   #std th:nth-child(n+6):not(:nth-child(8)):not(:nth-child(9)),#std td:nth-child(n+6):not(:nth-child(8)):not(:nth-child(9)){display:none}
+  #std{table-layout:fixed} #std th:nth-child(1){width:34px} #std th:nth-child(3){width:44px} #std th:nth-child(4),#std th:nth-child(5){width:30px} #std th:nth-child(8){width:50px} #std th:nth-child(9){width:42px}
+  #std td.nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap} #std .inj-n{margin-left:5px}
   .lu th,.lu td{padding:4px 6px}
   #lu th:nth-child(1),#lu td:nth-child(1),#lu th:nth-child(6),#lu td:nth-child(6),#lu th:nth-child(7),#lu td:nth-child(7),#lu th:nth-child(8),#lu td:nth-child(8),#lu th:nth-child(11),#lu td:nth-child(11){display:none}
   #lu .pl small{display:none}
@@ -426,6 +428,7 @@ table.f-t{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;
     <div class="card" style="padding:16px 16px 6px;display:grid;gap:14px">
       <div class="lu-head" id="luHead"></div>
       <div style="overflow-x:auto"><table class="lu" id="lu"></table></div>
+      <p class="help lu-note" id="luNote" hidden></p>
     </div>
   </section>
 
@@ -581,7 +584,39 @@ function compute(){
   const kToday = idxThrough(today), kPrev = idxBefore(today);
   const kY = idxBefore(yday);
   PICKS.forEach(q => { q.today = pts(q, statAt(q, kToday)) - pts(q, statAt(q, kPrev)); q.hier = pts(q, statAt(q, kPrev)) - pts(q, statAt(q, kY)); q.hierGp = statAt(q, kPrev)[0] - statAt(q, kY)[0]; });
-  R = { now, today };
+  R = { now, today, prev, prev2 };
+}
+
+/* ---------- Ce que chaque choix ajoute au total ----------
+   Quand un joueur entre dans le top 10, il en pousse un autre dehors : les points de celui-ci ne comptent plus.
+   Le total de la soirée = somme de ces apports (et non la simple somme des points marqués). */
+function swings(after, before){
+  const m = new Map();
+  (after?.picks || []).forEach(x => {
+    const y = before?.picks.find(z => z.q === x.q);
+    const was = y?.counted ? y.pts : 0, is = x.counted ? x.pts : 0;
+    m.set(x.q, { d: is - was, cnt: x.counted, inn: x.counted && !y?.counted, out: !x.counted && !!y?.counted && y.pts > 0 });
+  });
+  return m;
+}
+function swingNote(after, before, when, total){
+  const ins = [], outs = [];
+  swings(after, before).forEach((v, q) => { if (v.out) outs.push([q, v]); else if (v.inn && v.d > 0) ins.push([q, v]); });
+  if (!outs.length) return "";
+  const nm = (q) => q.type === "T" ? "les " + q.name : q.name;
+  const lost = outs.reduce((t, [, v]) => t - v.d, 0);
+  const outTxt = outs.map(([q, v]) => `<b>${esc(nm(q))}</b> (−${-v.d})`).join(" et ");
+  const head = ins.length
+    ? `${when}, ${ins.map(([q]) => `<b>${esc(nm(q))}</b>`).join(" et ")} ${ins.length > 1 ? "entrent" : "entre"} dans le top 10 et ${ins.length > 1 ? "poussent" : "pousse"} ${outTxt} dehors`
+    : `${when}, ${outTxt} ${outs.length > 1 ? "sortent" : "sort"} du top 10`;
+  return `${head} : ${lost > 1 ? "ces " + lost + " points ne comptent plus" : "ce point ne compte plus"}. Total : <b>${total > 0 ? "+" + total : total}</b>.`;
+}
+function swingCell(v, raw, plays, posCls){
+  if (!v) return `<td class="zero">—</td>`;
+  if (v.out) return `<td class="dn" title="Sorti du top 10 : ses points ne comptent plus">−${-v.d}</td>`;
+  if (v.cnt) return v.d > 0 ? `<td class="${posCls}"${v.inn ? ' title="Entre dans le top 10"' : ""}>+${v.d}</td>` : plays ? `<td class="tn-play">0</td>` : `<td class="zero">—</td>`;
+  if (raw > 0) return `<td class="zero" title="Hors top 10 : ces points ne comptent pas">(+${raw})</td>`;
+  return plays ? `<td class="tn-play">0</td>` : `<td class="zero">—</td>`;
 }
 
 /* ---------- Render: hero ---------- */
@@ -774,7 +809,8 @@ function renderDay(){
   const gameOf = {};
   games.forEach(g => { if (g.st !== "off") { gameOf[g.a.t] = g; gameOf[g.h.t] = g; } });
   const k1 = idxThrough(d), k0 = idxBefore(d);
-  const a = standingsAt(k1), b = Object.fromEntries(standingsAt(k0).map(r => [r.p.id, r.pts]));
+  const a = standingsAt(k1), bRows = standingsAt(k0), b = Object.fromEntries(bRows.map(r => [r.p.id, r.pts]));
+  const aBy = Object.fromEntries(a.map(r => [r.p.id, r])), bBy = Object.fromEntries(bRows.map(r => [r.p.id, r]));
   const gain = Object.fromEntries(a.map(r => [r.p.id, r.pts - b[r.p.id]]));
   const started = games.some(g => g.st !== "pre");
   const dayStats = DATA?.days?.[d] || { p: {}, t: {} };
@@ -783,16 +819,17 @@ function renderDay(){
     const inGame = r.picks.filter(x => gameOf[teamOf(x.q)]);
     const playing = inGame.slice().sort((x, y) => ((statusOf(x.q)?.out ? 1 : 0) - (statusOf(y.q)?.out ? 1 : 0)) || (y.counted - x.counted) || (gameOf[teamOf(x.q)].date - gameOf[teamOf(y.q)].date) || x.q.r - y.q.r);
     const g = gain[r.p.id];
+    const sw = swings(aBy[r.p.id], bBy[r.p.id]), swNote = started ? swingNote(aBy[r.p.id], bBy[r.p.id], d === today ? "Ce soir" : "Ce jour-là", g) : "";
     const nOut = playing.filter(x => statusOf(x.q)?.out).length, nPlay = playing.length - nOut;
     const rows = playing.map(x => {
       const q = x.q, gm = gameOf[teamOf(q)], me = teamOf(q), opp = gm.a.t === me ? "@ " + gm.h.t : "vs " + gm.a.t;
       const s = q.type === "T" ? dayStats.t[q.team] : dayStats.p[q.id];
       const p = s ? pts(q, s) : 0, ln = statLine(q, s);
       const stq = statusOf(q);
-      return `<div class="pr ${x.counted && !stq?.out ? "" : "out"}${q.type === "T" ? "" : " clk"}"${q.type === "T" ? "" : ` data-a="${esc(q.id)}" tabindex="0"`}>${face(q)}<div class="who"><b>${esc(q.type === "T" ? "Équipe " + q.name : q.name)} ${badge(stq)}</b><small>${logo(me, true)} ${esc(opp)}${ln ? " · " + esc(ln) : ""}${x.counted ? "" : ` <span class="out-tag">hors top 10</span>`}</small></div><span class="st ${gm.st === "in" ? "lv" : ""}">${esc(status(gm))}</span><span class="pp ${p ? "on" : ""}">${gm.st === "pre" ? "" : p > 0 ? "+" + p : "0"}</span></div>`;
+      return `<div class="pr ${x.counted && !stq?.out ? "" : "out"}${q.type === "T" ? "" : " clk"}"${q.type === "T" ? "" : ` data-a="${esc(q.id)}" tabindex="0"`}>${face(q)}<div class="who"><b>${esc(q.type === "T" ? "Équipe " + q.name : q.name)} ${badge(stq)}</b><small>${logo(me, true)} ${esc(opp)}${ln ? " · " + esc(ln) : ""}${x.counted ? "" : ` <span class="out-tag">hors top 10</span>`}</small></div><span class="st ${gm.st === "in" ? "lv" : ""}">${esc(status(gm))}</span>${(() => { const v = sw.get(q); if (gm.st === "pre") return `<span class="pp"></span>`; if (v?.out) return `<span class="pp dn" title="Sorti du top 10 : ses points ne comptent plus">−${-v.d}</span>`; if (v && !v.cnt && p > 0) return `<span class="pp" title="Hors top 10 : ces points ne comptent pas">(+${p})</span>`; const n = v?.cnt ? v.d : p; return `<span class="pp ${n ? "on" : ""}">${n > 0 ? "+" + n : "0"}</span>`; })()}</div>`;
     }).join("");
     return `<details class="nl" data-p="${r.p.id}" ${OPEN.has(r.p.id) ? "open" : ""}><summary><span class="rkn">${r.rank}</span><span class="nm">${esc(r.p.name)}</span><span class="ct"><b>${nPlay}</b>joueur${nPlay > 1 ? "s" : ""}${nOut ? `<small>+${nOut} blessé${nOut > 1 ? "s" : ""}</small>` : ""}</span><span class="gain ${g > 0 ? "on" : ""}">${started ? (g > 0 ? "+" + g : "0") : ""}</span><span class="chev" aria-hidden="true">›</span></summary>
-      <div class="nl-body">${rows || `<p class="help" style="padding:8px 0">Aucun joueur de ${esc(r.p.name)} ne joue ${d === today ? "ce soir" : "cette journée-là"}.</p>`}</div></details>`;
+      <div class="nl-body">${rows || `<p class="help" style="padding:8px 0">Aucun joueur de ${esc(r.p.name)} ne joue ${d === today ? "ce soir" : "cette journée-là"}.</p>`}${swNote ? `<p class="help sw-note">${swNote}</p>` : ""}</div></details>`;
   }).join("");
   $("#gamesLbl").textContent = games.length ? (d === today ? "Les matchs de ce soir" : "Les matchs") : "";
   $("#games").innerHTML = games.length ? games.map(g => {
@@ -814,10 +851,14 @@ function renderLineup(){
   $("#luHead").innerHTML = `<div><span class="eyebrow">${r.rank === 1 ? "1<sup>er</sup>" : r.rank + "<sup>e</sup>"} au classement</span><h3>${esc(r.p.name)}</h3></div>
     <div class="lu-sum"><div><b>${r.pts}</b><span>Points</span></div><div><b>${r.gp}</b><span>Matchs</span></div><div><b>${r.tonight > 0 ? "+" + r.tonight : 0}</b><span>Ce soir</span></div><div><b>${r.hier > 0 ? "+" + r.hier : 0}</b><span>Hier</span></div><div><b>${r.gap ? "−" + r.gap : "—"}</b><span>Écart</span></div></div>`;
   const rows = r.picks.slice().sort((a, b) => b.pts - a.pts || b.counted - a.counted || a.gp - b.gp || a.r - b.r);
+  const P1 = R.prev[r.p.id], P2 = R.prev2[r.p.id];
+  const mT = swings(r, P1), mH = swings(P1, P2);
+  const note = [swingNote(r, P1, "Ce soir", r.tonight), swingNote(P1, P2, "Hier", r.hier)].filter(Boolean).join("<br>");
+  $("#luNote").innerHTML = note; $("#luNote").hidden = !note;
   $("#lu").innerHTML = `<thead><tr><th>Ronde</th><th class="l">Choix</th><th>Pts</th><th>B</th><th>P</th><th>PJ</th><th>V</th><th>Boni</th><th>Ce soir</th><th>Hier</th><th class="l">Compte</th></tr></thead><tbody>` +
     rows.map(x => { const q = x.q; const isT = q.type === "T";
       return `<tr class="${x.counted ? "" : "out"}${isT ? "" : " clk"}"${isT ? "" : ` data-a="${esc(q.id)}" tabindex="0"`}><td>${q.r}</td><td class="l"><span class="pl">${face(q)}<b>${isT ? nameHTML("Équipe " + q.name, q.name) : nameHTML(q.name, shortName(q.name))}</b>${badge(statusOf(q))}<small>${esc(posLbl(q))} · ${esc(isT ? teamOf(q) : (POOL.teams[teamOf(q)]?.name || teamOf(q)))}${statusOf(q)?.info ? " · " + esc(statusOf(q).info) : ""}</small></span></td>
-      <td class="pts">${x.pts}</td><td>${isT ? "—" : x.g}</td><td>${isT ? "—" : x.a}</td><td>${x.gp}</td><td>${q.type === "G" ? x.w : isT ? x.tw : "—"}</td><td>${q.type === "G" ? (x.so ? x.so + " BL" : "—") : isT ? (x.otl ? x.otl + " DP" : "—") : (x.ht ? x.ht + " TC" : "—")}</td><td class="${q.today > 0 ? "tn-on" : playTonight.has(teamOf(q)) && !statusOf(q)?.out ? "tn-play" : "zero"}">${q.today > 0 ? "+" + q.today : playTonight.has(teamOf(q)) && !statusOf(q)?.out ? "0" : "—"}</td><td class="${q.hier > 0 ? "hier" : "zero"}">${q.hier > 0 ? "+" + q.hier : q.hierGp > 0 ? "0" : "—"}</td><td class="l"><span class="cnt ${x.counted ? "" : "no"}">${x.counted ? "Compte" : "Hors top 10"}</span></td></tr>`; }).join("") + "</tbody>";
+      <td class="pts">${x.pts}</td><td>${isT ? "—" : x.g}</td><td>${isT ? "—" : x.a}</td><td>${x.gp}</td><td>${q.type === "G" ? x.w : isT ? x.tw : "—"}</td><td>${q.type === "G" ? (x.so ? x.so + " BL" : "—") : isT ? (x.otl ? x.otl + " DP" : "—") : (x.ht ? x.ht + " TC" : "—")}</td>${swingCell(mT.get(q), q.today, playTonight.has(teamOf(q)) && !statusOf(q)?.out, "tn-on")}${swingCell(mH.get(q), q.hier, q.hierGp > 0, "hier")}<td class="l"><span class="cnt ${x.counted ? "" : "no"}">${x.counted ? "Compte" : "Hors top 10"}</span></td></tr>`; }).join("") + "</tbody>";
 }
 
 /* ---------- Render: leaders ---------- */
