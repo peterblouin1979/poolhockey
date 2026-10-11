@@ -1149,7 +1149,7 @@ async function boot(){
   $("#dNext").onclick = async () => { VIEW_DAY = addDays(VIEW_DAY, 1); await loadDay(VIEW_DAY); renderDay(); };
   tick();
 }
-async function tick(){
+async function tick(fast){
   const live = [TODAY(), addDays(TODAY(), -1)].some(d => (SB[d]?.games || []).some(g => g.st === "in"));
   const soon = (SB[TODAY()]?.games || []).some(g => g.st === "pre" && g.date - Date.now() < 20 * 60e3);
   clearTimeout(tick.t);
@@ -1165,8 +1165,32 @@ async function tick(){
       renderAll();
     } } catch (e) { console.error(e); }
     tick();
-  }, live || soon ? 60e3 : 5 * 60e3);
+  }, fast ? 200 : live || soon ? 60e3 : 5 * 60e3);
 }
+// Toujours la dernière version de la page : le téléphone garde une copie jusqu'à 10 minutes (réglage de GitHub).
+// Si une version plus récente a été publiée, on recharge tout seul (au plus une fois par 2 minutes).
+if (/[?&]v=\d+/.test(location.search)) history.replaceState(null, "", location.pathname + location.search.replace(/[?&]v=\d+/, "").replace(/^&/, "?") + location.hash);
+async function checkVersion(){
+  try {
+    const r = await fetch(location.pathname + "?nv=" + Date.now(), { method: "HEAD", cache: "no-store" });
+    const lm = Date.parse(r.headers.get("last-modified") || ""), mine = Date.parse(document.lastModified);
+    if (!r.ok || !lm || !mine || lm - mine < 2000) return;
+    let last = 0; try { last = +sessionStorage.getItem("poolhockey:reloadAt") || 0; sessionStorage.setItem("poolhockey:reloadAt", String(Date.now())); } catch (e) {}
+    if (Date.now() - last > 120e3) location.replace(location.pathname + "?v=" + lm + location.hash);
+  } catch (e) {}
+}
+setTimeout(checkVersion, 4000);
+setInterval(() => { if (document.visibilityState === "visible") checkVersion(); }, 10 * 60e3);
+// De retour sur la page : tout rafraîchir tout de suite (matchs, points, blessures, nouvelles)
+let hiddenAt = 0;
+function wakeUp(){
+  if (!POOL || !DATA) return;
+  if (hiddenAt && Date.now() - hiddenAt > 60e3) tick.data = 0;
+  checkVersion();
+  tick(true);
+}
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") hiddenAt = Date.now(); else wakeUp(); });
+window.addEventListener("pageshow", (ev) => { if (ev.persisted) { hiddenAt = 1; wakeUp(); } });
 if (/[?&]debug/.test(location.search)) window.__pool = { applyGame, getSummary, loadDay, get SB(){ return SB; }, get DATA(){ return DATA; }, get R(){ return R; } };
 boot().catch(err => { $("#pillTxt").textContent = "Impossible de charger le pool pour l'instant"; console.error(err); });
 })();
