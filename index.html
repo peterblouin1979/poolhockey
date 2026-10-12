@@ -664,15 +664,17 @@ function renderStandings(){
 async function loadDay(d, force){
   if (SB[d] && !force && (Date.now() - SB[d].at < 60e3 || !SB[d].games.some(g => g.st !== "post"))) return;
   try {
-    const r = await fetch(`${API}/scoreboard?dates=${d.replace(/-/g, "")}`, { cache: "no-store" });
+    const r = await fetch(`${API}/scoreboard?dates=${d.replace(/-/g, "")}&_=${Date.now()}`, { cache: "no-store" });
+    if (!r.ok) throw new Error("ESPN " + r.status);
     const j = await r.json();
     const games = (j.events || []).filter(e => !e.season || e.season.type === 2).map(e => {
       const c = e.competitions[0], H = c.competitors.find(x => x.homeAway === "home"), A = c.competitors.find(x => x.homeAway === "away");
       const off = /POSTPONED|CANCELED|SUSPENDED/.test(e.status?.type?.name || "");
       return { id: e.id, date: new Date(e.date), st: off ? "off" : e.status.type.state, det: e.status.type.shortDetail || "", per: e.status?.period || 0, a: { t: nab(A.team.abbreviation), s: +A.score || 0, w: !!A.winner }, h: { t: nab(H.team.abbreviation), s: +H.score || 0, w: !!H.winner }, tv: (c.broadcasts?.[0]?.names || []).join(", ") };
     });
-    SB[d] = { at: Date.now(), games };
+    SB[d] = { at: Date.now(), games }; loadDay.fail.delete(d);
   } catch (e) {
+    loadDay.fail.add(d); // raté : on réessaie dans quelques secondes
     const g = (DATA?.games?.[d] || []).map(x => ({ id: x[0], a: { t: nab(x[1]), s: x[3] }, h: { t: nab(x[2]), s: x[4] }, st: x[5], det: x[6], per: x[7] || 0, date: new Date(x[8]) }));
     g.forEach(x => { if (x.st === "post") { x.a.w = x.a.s > x.h.s; x.h.w = x.h.s > x.a.s; } });
     SB[d] = { at: Date.now(), games: g };
@@ -687,10 +689,11 @@ function sets(){
   POOL.participants.forEach(p => p.picks.forEach(q => { if (q.type === "T") tms.add(q.team); else { ids.add(q.id); if (q.type === "G") gids.add(q.id); } }));
   return SETS = { ids, gids, tms };
 }
+loadDay.fail = new Set();
 async function getSummary(g){
   const c = SUM[g.id];
   if (c && (c.final || Date.now() - c.at < 45e3)) return c.data;
-  const r = await fetch(`${API}/summary?event=${g.id}`, { cache: "no-store" });
+  const r = await fetch(`${API}/summary?event=${g.id}&_=${Date.now()}`, { cache: "no-store" });
   if (!r.ok) throw new Error("summary " + r.status);
   const j = await r.json();
   const teamAb = Object.fromEntries((j.boxscore?.players || []).map(tb => [tb.team?.id, nab(tb.team?.abbreviation)]));
@@ -1165,7 +1168,7 @@ async function tick(fast){
       renderAll();
     } } catch (e) { console.error(e); }
     tick();
-  }, fast ? 200 : live || soon ? 60e3 : 5 * 60e3);
+  }, fast ? 200 : (tick.fails = loadDay.fail.has(TODAY()) ? (tick.fails || 0) + 1 : 0) && tick.fails <= 5 ? 8e3 : live || soon ? 60e3 : 5 * 60e3);
 }
 // Toujours la dernière version de la page : le téléphone garde une copie jusqu'à 10 minutes (réglage de GitHub).
 // Si une version plus récente a été publiée, on recharge tout seul (au plus une fois par 2 minutes).
